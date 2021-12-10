@@ -23,6 +23,12 @@ variable "name" {
   description = "(Required) The name of the cluster."
 }
 
+variable "rbac_security_identity_group" {
+  description = "(Optional) The name of the RBAC security identity group for use with Google security groups in Kubernetes RBAC. Group name must be in format `gke-security-groups@yourdomain.com`."
+  type        = string
+  default     = null
+}
+
 variable "min_master_version" {
   type        = string
   description = "(Required) The Kubernetes minimal version of the masters. If set to 'latest' it will pull latest available version in the selected region."
