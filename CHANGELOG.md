@@ -28,6 +28,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `master_auth` block
 - Refactored `workload_pool` block
 
+### Changed
+
+- Remove support for `google_project_service` resource
+- Removed `master_auth` block
+- Refactored `workload_pool` block
+
 ## [0.0.1]
 
 ### Added
