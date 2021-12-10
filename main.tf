@@ -1,5 +1,5 @@
 resource "google_container_cluster" "cluster" {
-  count = 1
+  count = var.module_enabled ? 1 : 0
 
   project    = var.project
   network    = var.network
@@ -184,10 +184,10 @@ resource "google_container_cluster" "cluster" {
   }
 
   timeouts {
-    create = "45m"
-    update = "45m"
-    delete = "45m"
+    create = try(var.module_timeouts.google_container_cluster.create, "45m")
+    update = try(var.module_timeouts.google_container_cluster.update, "45m")
+    delete = try(var.module_timeouts.google_container_cluster.delete, "45m")
   }
 
-  depends_on = []
+  depends_on = [var.module_depends_on]
 }
