@@ -1,9 +1,3 @@
-resource "google_project_service" "container" {
-  project                    = var.project
-  service                    = "container.googleapis.com"
-  disable_dependent_services = false
-}
-
 resource "google_container_cluster" "cluster" {
   count = 1
 
@@ -96,19 +90,6 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
-  ### Disable unsecure authentication mechanisms:
-  # This has been deprecated as of GKE 1.19.
-  # TODO: checkif removing also disables it, the documentation is unclear here
-
-  master_auth {
-    username = null
-    password = null
-
-    client_certificate_config {
-      issue_client_certificate = false
-    }
-  }
-
   ### Configure addons
 
   addons_config {
@@ -192,7 +173,7 @@ resource "google_container_cluster" "cluster" {
   }
 
   workload_identity_config {
-    identity_namespace = "${var.project}.svc.id.goog"
+    workload_pool = "${var.project}.svc.id.goog"
   }
 
   lifecycle {
@@ -208,7 +189,5 @@ resource "google_container_cluster" "cluster" {
     delete = "45m"
   }
 
-  depends_on = [
-    google_project_service.container
-  ]
+  depends_on = []
 }
