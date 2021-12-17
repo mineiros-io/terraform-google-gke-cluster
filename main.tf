@@ -1,5 +1,5 @@
 resource "google_container_cluster" "cluster" {
-  count = 1
+  count = var.module_enabled ? 1 : 0
 
   project    = var.project
   network    = var.network
@@ -12,6 +12,13 @@ resource "google_container_cluster" "cluster" {
   location       = var.location
   node_locations = var.node_locations
 
+  dynamic "authenticator_groups_config" {
+    for_each = var.rbac_security_identity_group != null ? [1] : []
+
+    content {
+      security_group = var.rbac_security_identity_group
+    }
+  }
 
   dynamic "network_policy" {
     for_each = var.network_policy != null ? [var.network_policy] : []
@@ -184,10 +191,10 @@ resource "google_container_cluster" "cluster" {
   }
 
   timeouts {
-    create = "45m"
-    update = "45m"
-    delete = "45m"
+    create = try(var.module_timeouts.google_container_cluster.create, null)
+    update = try(var.module_timeouts.google_container_cluster.update, null)
+    delete = try(var.module_timeouts.google_container_cluster.delete, null)
   }
 
-  depends_on = []
+  depends_on = [var.module_depends_on]
 }

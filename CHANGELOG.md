@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Set minimum required provider version to `v4.1`
+- Add module configuration variables
+- Add support for the `authenticator_groups_config` block
 
 ### Changed
 
