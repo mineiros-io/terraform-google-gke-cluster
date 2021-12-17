@@ -12,7 +12,8 @@ locals {
 # ----------------------------------------------------------------------------------------------------------------------
 
 output "name" {
-  value = local.name_from_id
+  description = "The name of the created cluster."
+  value       = local.name_from_id
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -20,7 +21,8 @@ output "name" {
 # ----------------------------------------------------------------------------------------------------------------------
 
 output "cluster" {
-  value = try(google_container_cluster.cluster[0], null)
+  description = "All attributes of the created `google_container_cluster` resource."
+  value       = try(google_container_cluster.cluster[0], null)
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -28,6 +30,7 @@ output "cluster" {
 # ----------------------------------------------------------------------------------------------------------------------
 
 output "module_enabled" {
-  description = "Whether the module is enabled."
+  description = "Whether or not the module is enabled."
   value       = var.module_enabled
 }
+
