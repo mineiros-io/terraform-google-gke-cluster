@@ -33,5 +33,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # - name: Run Unit Tests
-      #   run: make test/unit-tests
+      - name: Run Unit Tests
+        run: make test/unit-tests
