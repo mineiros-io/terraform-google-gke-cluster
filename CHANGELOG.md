@@ -7,16 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2]
+
 ### Added
 
-- Set minimum required provider version to `v4.1`
+- BREAKING CHANGE: Set minimum required provider version to `v4.1`
 - Add module configuration variables
 - Add support for the `authenticator_groups_config` block
 
 ### Changed
 
-- Remove support for `google_project_service` resource
-- Removed `master_auth` block
+- BREAKING CHANGE: Remove support for `google_project_service` resource
+  Please remove service resource from state
+- BREAKING CHANGE: Removed `master_auth` block
 - Refactored `workload_pool` block
 
 ## [0.0.1]
@@ -27,7 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- markdown-link-check-disable -->
 
-[unreleased]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.1...HEAD
+[unreleased]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/mineiros-io/terraform-google-gke-cluster/releases/tag/v0.0.1
 
 <!-- markdown-link-check-disabled -->
