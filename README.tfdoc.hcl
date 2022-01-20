@@ -148,7 +148,7 @@ section {
         required    = true
         type        = string
         description = <<-END
-          The Kubernetes minimal version of the masters. If set to 'latest' it
+          The Kubernetes minimal version of the masters. If set to `latest` it
           will pull latest available version in the selected region.
         END
       }
@@ -309,8 +309,8 @@ section {
         type        = object(cluster_autoscaling)
         default     = {}
         description = <<-END
-          Cluster autoscaling configuration. See [more details]
-          (https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling)
+          Cluster autoscaling configuration. More info:
+          https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling
         END
 
         attribute "enable" {
@@ -336,8 +336,8 @@ section {
             type        = string
             description = <<-END
               The type of the resource. For example, `cpu` and `memory`. See the
-              guide to [using Node Auto-Provisioning]
-              (https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
+              guide to using Node Auto-Provisioning:
+              https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning
               for a list of types.
             END
           }
@@ -367,7 +367,7 @@ section {
             type        = list(string)
             description = <<-END
               Scopes that are used by NAP when creating node pools. Use the
-              "https://www.googleapis.com/auth/cloud-platform" scope to grant
+              https://www.googleapis.com/auth/cloud-platform scope to grant
               access to all APIs. It is recommended that you set
               `service_account` to a non-default service account and grant IAM
               roles to that service account for only the resources that it
@@ -491,7 +491,7 @@ section {
           A map of timeout objects that is keyed by Terraform resource name
           defining timeouts for `create`, `update` and `delete` Terraform operations.
 
-          Supported resources are: `null_resource`, ...
+          Supported resources are: `google_container_cluster`, ...
         END
         readme_example = <<-END
           module_timeouts = {

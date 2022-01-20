@@ -102,7 +102,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`min_master_version`**](#var-min_master_version): *(**Required** `string`)*<a name="var-min_master_version"></a>
 
-  The Kubernetes minimal version of the masters. If set to 'latest' it
+  The Kubernetes minimal version of the masters. If set to `latest` it
   will pull latest available version in the selected region.
 
 - [**`cluster_secondary_range_name`**](#var-cluster_secondary_range_name): *(**Required** `string`)*<a name="var-cluster_secondary_range_name"></a>
@@ -216,8 +216,8 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`cluster_autoscaling`**](#var-cluster_autoscaling): *(Optional `object(cluster_autoscaling)`)*<a name="var-cluster_autoscaling"></a>
 
-  Cluster autoscaling configuration. See [more details]
-  (https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling)
+  Cluster autoscaling configuration. More info:
+  https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling
 
   Default is `{}`.
 
@@ -240,8 +240,8 @@ See [variables.tf] and [examples/] for details and use-cases.
     - [**`resource_type`**](#attr-cluster_autoscaling-resource_limits-resource_type): *(**Required** `string`)*<a name="attr-cluster_autoscaling-resource_limits-resource_type"></a>
 
       The type of the resource. For example, `cpu` and `memory`. See the
-      guide to [using Node Auto-Provisioning]
-      (https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
+      guide to using Node Auto-Provisioning:
+      https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning
       for a list of types.
 
     - [**`maximum`**](#attr-cluster_autoscaling-resource_limits-maximum): *(Optional `number`)*<a name="attr-cluster_autoscaling-resource_limits-maximum"></a>
@@ -261,7 +261,7 @@ See [variables.tf] and [examples/] for details and use-cases.
     - [**`oauth_scopes`**](#attr-cluster_autoscaling-auto_provisioning_defaults-oauth_scopes): *(Optional `list(string)`)*<a name="attr-cluster_autoscaling-auto_provisioning_defaults-oauth_scopes"></a>
 
       Scopes that are used by NAP when creating node pools. Use the
-      "https://www.googleapis.com/auth/cloud-platform" scope to grant
+      https://www.googleapis.com/auth/cloud-platform scope to grant
       access to all APIs. It is recommended that you set
       `service_account` to a non-default service account and grant IAM
       roles to that service account for only the resources that it
@@ -350,7 +350,7 @@ See [variables.tf] and [examples/] for details and use-cases.
   A map of timeout objects that is keyed by Terraform resource name
   defining timeouts for `create`, `update` and `delete` Terraform operations.
 
-  Supported resources are: `null_resource`, ...
+  Supported resources are: `google_container_cluster`, ...
 
   Example:
 
