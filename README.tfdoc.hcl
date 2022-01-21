@@ -336,7 +336,7 @@ section {
             type        = string
             description = <<-END
               The type of the resource. For example, `cpu` and `memory`. See the
-              [guide to using Node Auto-Provisioning].(https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
+              [guide to using Node Auto-Provisioning](https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
               for a list of types.
             END
           }

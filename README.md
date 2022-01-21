@@ -240,7 +240,7 @@ See [variables.tf] and [examples/] for details and use-cases.
     - [**`resource_type`**](#attr-cluster_autoscaling-resource_limits-resource_type): *(**Required** `string`)*<a name="attr-cluster_autoscaling-resource_limits-resource_type"></a>
 
       The type of the resource. For example, `cpu` and `memory`. See the
-      [guide to using Node Auto-Provisioning].(https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
+      [guide to using Node Auto-Provisioning](https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
       for a list of types.
 
     - [**`maximum`**](#attr-cluster_autoscaling-resource_limits-maximum): *(Optional `number`)*<a name="attr-cluster_autoscaling-resource_limits-maximum"></a>
