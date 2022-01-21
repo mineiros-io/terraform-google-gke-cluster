@@ -309,8 +309,8 @@ section {
         type        = object(cluster_autoscaling)
         default     = {}
         description = <<-END
-          Cluster autoscaling configuration. More info:
-          https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling
+          Cluster autoscaling configuration. For more info see 
+          [documentation](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling)
         END
 
         attribute "enable" {
@@ -336,8 +336,7 @@ section {
             type        = string
             description = <<-END
               The type of the resource. For example, `cpu` and `memory`. See the
-              guide to using Node Auto-Provisioning:
-              https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning
+              [guide to using Node Auto-Provisioning].(https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
               for a list of types.
             END
           }
@@ -402,7 +401,7 @@ section {
           Automatically send metrics from pods in the cluster to the Google
           Cloud Monitoring API. VM metrics will be collected by Google Comput
           Engine regardless of this setting Available options include
-          `monitoring.googleapis.com`, and none.
+          `monitoring.googleapis.com`, and `none`.
         END
       }
 
@@ -573,7 +572,7 @@ section {
     title = "External Documentation"
 
     section {
-      title   = "AWS Documentation IAM"
+      title   = "Google Documentation"
       content = <<-END
         - https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture
       END

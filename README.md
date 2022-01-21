@@ -26,7 +26,7 @@ secure, and production-grade cloud infrastructure.
   - [Module Configuration](#module-configuration)
 - [Module Outputs](#module-outputs)
 - [External Documentation](#external-documentation)
-  - [AWS Documentation IAM](#aws-documentation-iam)
+  - [Google Documentation](#google-documentation)
   - [Terraform GCP Provider Documentation](#terraform-gcp-provider-documentation)
 - [Module Versioning](#module-versioning)
   - [Backwards compatibility in `0.0.z` and `0.y.z` version](#backwards-compatibility-in-00z-and-0yz-version)
@@ -216,8 +216,8 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`cluster_autoscaling`**](#var-cluster_autoscaling): *(Optional `object(cluster_autoscaling)`)*<a name="var-cluster_autoscaling"></a>
 
-  Cluster autoscaling configuration. More info:
-  https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling
+  Cluster autoscaling configuration. For more info see 
+  [documentation](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling)
 
   Default is `{}`.
 
@@ -240,8 +240,7 @@ See [variables.tf] and [examples/] for details and use-cases.
     - [**`resource_type`**](#attr-cluster_autoscaling-resource_limits-resource_type): *(**Required** `string`)*<a name="attr-cluster_autoscaling-resource_limits-resource_type"></a>
 
       The type of the resource. For example, `cpu` and `memory`. See the
-      guide to using Node Auto-Provisioning:
-      https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning
+      [guide to using Node Auto-Provisioning].(https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
       for a list of types.
 
     - [**`maximum`**](#attr-cluster_autoscaling-resource_limits-maximum): *(Optional `number`)*<a name="attr-cluster_autoscaling-resource_limits-maximum"></a>
@@ -285,7 +284,7 @@ See [variables.tf] and [examples/] for details and use-cases.
   Automatically send metrics from pods in the cluster to the Google
   Cloud Monitoring API. VM metrics will be collected by Google Comput
   Engine regardless of this setting Available options include
-  `monitoring.googleapis.com`, and none.
+  `monitoring.googleapis.com`, and `none`.
 
   Default is `"monitoring.googleapis.com/kubernetes"`.
 
@@ -411,7 +410,7 @@ The following attributes are exported in the outputs of the module:
 
 ## External Documentation
 
-### AWS Documentation IAM
+### Google Documentation
 
 - https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture
 
