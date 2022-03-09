@@ -48,7 +48,7 @@ Most common usage of the module:
 
 ```hcl
 module "terraform-google-gke-cluster" {
-  source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.1"
+  source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.2"
 
   project            = "project-id"
   location           = "region"
