@@ -1,7 +1,14 @@
+data "google_project" "project" {}
+
+locals {
+  project = var.project != null ? var.project : data.google_project.project.project_id
+}
+
 resource "google_container_cluster" "cluster" {
   count = var.module_enabled ? 1 : 0
 
-  project    = var.project
+  project = local.project
+
   network    = var.network
   subnetwork = var.subnetwork
 
@@ -11,6 +18,25 @@ resource "google_container_cluster" "cluster" {
 
   location       = var.location
   node_locations = var.node_locations
+
+  networking_mode             = var.networking_mode
+  enable_intranode_visibility = var.enable_intranode_visibility
+  private_ipv6_google_access  = var.private_ipv6_google_access
+
+  enable_shielded_nodes       = var.enable_shielded_nodes
+  enable_binary_authorization = var.enable_binary_authorization
+  enable_kubernetes_alpha     = var.enable_kubernetes_alpha
+  enable_tpu                  = var.enable_tpu
+  enable_legacy_abac          = var.enable_legacy_abac
+
+  # TODO: use data source to allow fuzzy version specification
+  min_master_version = var.min_master_version
+
+  logging_service    = var.logging_service
+  monitoring_service = var.monitoring_service
+
+  cluster_ipv4_cidr         = var.cluster_ipv4_cidr
+  default_max_pods_per_node = var.default_max_pods_per_node
 
   dynamic "authenticator_groups_config" {
     for_each = var.rbac_security_identity_group != null ? [1] : []
@@ -37,57 +63,88 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
-  # TODO: use data source to allow fuzzy version specification
-  min_master_version = var.min_master_version
-
-  logging_service    = var.logging_service
-  monitoring_service = var.monitoring_service
-
-  ### Node auto-provisioning
-
-  dynamic "cluster_autoscaling" {
-    for_each = can(var.cluster_autoscaling.enabled) ? [1] : []
+  dynamic "logging_config" {
+    for_each = var.logging_enable_components != null ? [1] : []
 
     content {
-      enabled = var.cluster_autoscaling.enabled
+      enable_components = var.logging_enable_components
+    }
+  }
+
+  dynamic "monitoring_config" {
+    for_each = var.monitoring_enable_components != null ? [1] : []
+
+    content {
+      enable_components = var.monitoring_enable_components
+    }
+  }
+
+  # --------------------------------------------------------------------------------------------------------------------
+  # Node auto-provisioning
+  # --------------------------------------------------------------------------------------------------------------------
+
+  dynamic "cluster_autoscaling" {
+    for_each = var.cluster_autoscaling != null ? [var.cluster_autoscaling] : []
+
+    content {
+      enabled = try(cluster_autoscaling.value.enabled, false)
 
       resource_limits {
         resource_type = "cpu"
-        minimum       = try(var.cluster_autoscaling.cpu.minimum, null)
-        maximum       = try(var.cluster_autoscaling.cpu.maximum, null)
+        minimum       = try(cluster_autoscaling.value.cpu.minimum, null)
+        maximum       = try(cluster_autoscaling.value.cpu.maximum, null)
       }
 
       resource_limits {
         resource_type = "memory"
-        minimum       = try(var.cluster_autoscaling.memory.minimum, null)
-        maximum       = try(var.cluster_autoscaling.memory.maximum, null)
+        minimum       = try(cluster_autoscaling.value.memory.minimum, null)
+        maximum       = try(cluster_autoscaling.value.memory.maximum, null)
+      }
+
+      dynamic "auto_provisioning_defaults" {
+        for_each = try([cluster_autoscaling.value.auto_provisioning_defaults], [])
+
+        content {
+          oauth_scopes    = try(auto_provisioning_defaults.value.oauth_scopes, null)
+          service_account = try(auto_provisioning_defaults.value.service_account, null)
+        }
       }
     }
   }
 
-  vertical_pod_autoscaling {
-    enabled = var.vertical_pod_autoscaling_enabled
+  dynamic "vertical_pod_autoscaling" {
+    for_each = var.enabled_vertical_pod_autoscaling != null ? [1] : []
+
+    content {
+      enabled = var.enabled_vertical_pod_autoscaling
+    }
   }
 
-  enable_shielded_nodes       = var.enable_shielded_nodes
-  enable_binary_authorization = var.enable_binary_authorization
+  dynamic "confidential_nodes" {
+    for_each = var.enable_confidential_nodes != null ? [1] : []
 
-  ### Master authorized networks
+    content {
+      enabled = var.enable_confidential_nodes
+    }
+  }
+
+  # --------------------------------------------------------------------------------------------------------------------
+  # MASTER AUTHORIZED NETWORKS
   # From the documentation:
-  #   The desired configuration options for master authorized networks.
-  #   Omit the nested cidr_blocks attribute to disallow external access
-  #   (except the cluster node IPs, which GKE automatically whitelists).
+  #  - The desired configuration options for master authorized networks.
+  #  - Omit the nested cidr_blocks attribute to disallow external access (except the cluster node IPs, which GKE automatically whitelists).
   #
-  # null                              => no access limitation ? (TODO: verify this)
-  # []                                => disallow external access (default)
-  # [{cidr_block, display_name}, ...] => whitelist specific cidr_blocks
+  #  - null                              => no access limitation ? (TODO: verify this)
+  #  - []                                => disallow external access (default)
+  #  - [{cidr_block, display_name}, ...] => whitelist specific cidr_blocks
+  # --------------------------------------------------------------------------------------------------------------------
 
   dynamic "master_authorized_networks_config" {
-    for_each = var.master_authorized_networks_cidr_blocks != null ? [1] : []
+    for_each = var.master_authorized_networks_config != null ? [1] : []
 
     content {
       dynamic "cidr_blocks" {
-        for_each = var.master_authorized_networks_cidr_blocks
+        for_each = master_authorized_networks_config.value.cidr_blocks
 
         content {
           cidr_block   = cidr_blocks.value.cidr_block
@@ -97,7 +154,9 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
-  ### Configure addons
+  # --------------------------------------------------------------------------------------------------------------------
+  # Configuration for addons supported by GKE
+  # --------------------------------------------------------------------------------------------------------------------
 
   addons_config {
     http_load_balancing {
@@ -111,36 +170,77 @@ resource "google_container_cluster" "cluster" {
     network_policy_config {
       disabled = !var.addon_network_policy_config
     }
-  }
 
-  ### VPC_NATIVE configuration
-
-  cluster_ipv4_cidr         = null
-  default_max_pods_per_node = var.default_max_pods_per_node
-
-  ip_allocation_policy {
-    cluster_secondary_range_name  = var.cluster_secondary_range_name
-    services_secondary_range_name = var.services_secondary_range_name
-  }
-
-  # TODO: support more options
-  maintenance_policy {
-    daily_maintenance_window {
-      start_time = var.maintenance_start_time
+    cloudrun_config {
+      disabled = !var.addon_cloudrun_config
     }
   }
 
-  ### Remove default node-pool after initial creation
+  # --------------------------------------------------------------------------------------------------------------------
+  # VPC_NATIVE configuration
+  # --------------------------------------------------------------------------------------------------------------------
+
+  dynamic "ip_allocation_policy" {
+    for_each = var.ip_allocation_policy != null ? [var.ip_allocation_policy] : []
+
+    content {
+      cluster_ipv4_cidr_block       = try(ip_allocation_policy.value.cluster_ipv4_cidr_block, null)
+      services_ipv4_cidr_block      = try(ip_allocation_policy.value.services_ipv4_cidr_block, null)
+      cluster_secondary_range_name  = try(ip_allocation_policy.value.cluster_secondary_range_name, null)
+      services_secondary_range_name = try(ip_allocation_policy.value.services_secondary_range_name, null)
+    }
+  }
+
+  dynamic "maintenance_policy" {
+    for_each = var.maintenance_policy != null ? [var.maintenance_policy] : []
+
+    content {
+      dynamic "daily_maintenance_window" {
+        for_each = try([maintenance_policy.value.daily_maintenance_window], [])
+
+        content {
+          start_time = daily_maintenance_window.value.start_time
+        }
+      }
+
+      dynamic "recurring_window" {
+        for_each = try([maintenance_policy.value.recurring_window], [])
+
+        content {
+          start_time = recurring_window.value.start_time
+          end_time   = recurring_window.value.end_time
+          recurrence = recurring_window.value.recurrence
+        }
+      }
+
+      dynamic "maintenance_exclusion" {
+        for_each = try(maintenance_policy.value.maintenance_exclusion, [])
+
+        content {
+          exclusion_name = maintenance_exclusion.value.exclusion_name
+          start_time     = maintenance_exclusion.value.start_time
+          end_time       = maintenance_exclusion.value.end_time
+        }
+      }
+    }
+  }
+
+  # --------------------------------------------------------------------------------------------------------------------
+  # REMOVE DEFAULT NODE-POOL AFTER INITIAL CREATION
+  #
   # We create the smallest possible default node-pool and delete it right away
   # there is no way not to create the default node pool.
   # node pools should be created using the terraform-google-gke-node-pool module
-  # for regional clusters thsi will create 1 node in each zone of the region
+  # for regional clusters that will create 1 node in each zone of the region
+  # --------------------------------------------------------------------------------------------------------------------
 
-  # node_pool {}
   initial_node_count       = 1
   remove_default_node_pool = true
 
-  ### Resource usage export to Bigquery
+  # --------------------------------------------------------------------------------------------------------------------
+  # Resource usage export to Bigquery
+  # --------------------------------------------------------------------------------------------------------------------
+
   dynamic "resource_usage_export_config" {
     for_each = var.resource_usage_export_bigquery_dataset_id != null ? [1] : []
 
@@ -154,11 +254,14 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
-  ### private cluster config
+  # --------------------------------------------------------------------------------------------------------------------
+  # PRIVATE CLUSTER CONFIG
   # From the provider documentation:
-  #   The Google provider is unable to validate certain configurations of private_cluster_config
-  #   when enable_private_nodes is false.
-  #   It's recommended that you omit the block entirely if the field is not set to true.
+  #   - The Google provider is unable to validate certain configurations of private_cluster_config,
+  #      when enable_private_nodes is false.
+  #   - It's recommended that you omit the block entirely if the field is not set to true.
+  # --------------------------------------------------------------------------------------------------------------------
+
   dynamic "private_cluster_config" {
     for_each = var.enable_private_nodes ? [1] : []
 
@@ -169,7 +272,10 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
-  ### Encryption-at-rest configuration
+  # --------------------------------------------------------------------------------------------------------------------
+  # Encryption-at-rest configuration
+  # --------------------------------------------------------------------------------------------------------------------
+
   dynamic "database_encryption" {
     for_each = var.database_encryption_key_name != null ? [1] : []
 
@@ -180,7 +286,7 @@ resource "google_container_cluster" "cluster" {
   }
 
   workload_identity_config {
-    workload_pool = "${var.project}.svc.id.goog"
+    workload_pool = "${local.project}.svc.id.goog"
   }
 
   lifecycle {
