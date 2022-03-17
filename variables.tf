@@ -171,24 +171,45 @@ variable "networking_mode" {
   type        = string
   description = "(Optional) Determines whether alias IPs or routes will be used for pod IPs in the cluster. Options are `VPC_NATIVE` or `ROUTES`. `VPC_NATIVE` enables IP aliasing, and requires the `ip_allocation_policy` block to be defined. By default when this field is unspecified."
   default     = "VPC_NATIVE"
+
+  validation {
+    condition     = can(regex("^VPC_NATIVE|ROUTES$", var.networking_mode))
+    error_message = "The networking_mode variable must be either set to 'VPC_NATIVE' or 'ROUTES'."
+  }
 }
 
 variable "logging_enable_components" {
   type        = string
   description = "(Optional) The GKE components exposing logs. Supported values include: `SYSTEM_COMPONENTS` and `WORKLOADS`."
   default     = null
+
+  validation {
+    condition     = var.logging_enable_components != null ? can(regex("^SYSTEM_COMPONENTS|WORKLOADS$", var.logging_enable_components)) : true
+    error_message = "The logging_enable_components variable must be either set to 'SYSTEM_COMPONENTS' or 'WORKLOADS'."
+  }
 }
 
 variable "logging_service" {
   type        = string
   description = "(Optional) The logging service that the cluster should write logs to. Available options include logging.googleapis.com, logging.googleapis.com/kubernetes (beta), and none"
   default     = "logging.googleapis.com/kubernetes"
+
+  validation {
+    condition     = var.logging_service != null ? can(regex("^(logging\\.googleapis\\.com(\\/kubernetes)?)$", var.logging_service)) : true
+    error_message = "The logging_service variable must be either set to 'logging.googleapis.com' or 'logging.googleapis.com/kubernetes' (beta)."
+  }
+
 }
 
 variable "monitoring_enable_components" {
   type        = string
   description = "(Optional) The GKE components exposing logs. `SYSTEM_COMPONENTS` and in beta provider, both `SYSTEM_COMPONENTS` and `WORKLOADS` are supported."
   default     = null
+
+  validation {
+    condition     = var.monitoring_enable_components != null ? can(regex("^SYSTEM_COMPONENTS|WORKLOADS$", var.monitoring_enable_components)) : true
+    error_message = "The monitoring_enable_components variable must be either set to 'SYSTEM_COMPONENTS' or 'WORKLOADS'."
+  }
 }
 
 variable "monitoring_service" {
@@ -202,7 +223,7 @@ variable "maintenance_policy" {
   # type = object({
   #   # (Optional) Daily maintenance window
   #   daily_maintenance_window = optional(object({
-  #     # (Required) Specify the `start_time` in RFC3339 format `HH:MM`, where HH : [00-23] and MM : [00-59] GMT. 
+  #     # (Required) Specify the `start_time` in RFC3339 format `HH:MM`, where HH : [00-23] and MM : [00-59] GMT.
   #     start_time = string
   #   }))
   #   # (Optional) Time window for recurring maintenance operations.
@@ -334,6 +355,11 @@ variable "release_channel" {
   type        = string
   description = "(Optional) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `UNSPECIFIED`."
   default     = "UNSPECIFIED"
+
+  validation {
+    condition     = var.release_channel != null ? can(regex("^UNSPECIFIED|RAPID|REGULAR|STABLE$", var.release_channel)) : true
+    error_message = "The release_channel variable must be either set to 'UNSPECIFIED', 'RAPID', 'REGULAR' or 'STABLE'."
+  }
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
