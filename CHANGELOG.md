@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add all missing attributes available in google provider `v4.1`
 - Add variable validation for `networking_mode`, `logging_enable_components`, `logging_service`, `monitoring_enable_components` and `release_channel`.
+- Add unit-tests
+
+### Fixed
+
+- Wrap `name` output in `try` to ensure integrity when `module_enabled = false`
 
 ## [0.0.2]
 
