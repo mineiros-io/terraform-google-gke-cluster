@@ -214,7 +214,7 @@ resource "google_container_cluster" "cluster" {
       }
 
       dynamic "maintenance_exclusion" {
-        for_each = try(maintenance_policy.value.maintenance_exclusion, [])
+        for_each = try(maintenance_policy.value.maintenance_exclusions, [])
 
         content {
           exclusion_name = maintenance_exclusion.value.exclusion_name
