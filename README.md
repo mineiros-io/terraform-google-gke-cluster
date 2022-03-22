@@ -10,7 +10,7 @@
 
 A [Terraform](https://www.terraform.io) module to create and manage a Google
 Kubernetes Engine (GKE) cluster.
-    
+
 **_This module supports Terraform version 1
 and is compatible with the Terraform Google Provider version 4._**
 
@@ -70,14 +70,15 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 ### Main Resource Configuration
 
-- [**`project`**](#var-project): *(**Required** `string`)*<a name="var-project"></a>
+- [**`name`**](#var-name): *(**Required** `string`)*<a name="var-name"></a>
 
-  The ID of the project in which the resource belongs.
+  The name of the cluster.
 
 - [**`location`**](#var-location): *(**Required** `string`)*<a name="var-location"></a>
 
-  The location (region or zone) in which the cluster master will be
-  created.
+  The location (region or zone) in which the cluster master will be created.
+  For the differences between zonal and regional clusters, please see
+  https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
 
 - [**`network`**](#var-network): *(**Required** `string`)*<a name="var-network"></a>
 
@@ -87,31 +88,94 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`subnetwork`**](#var-subnetwork): *(**Required** `string`)*<a name="var-subnetwork"></a>
 
-  The name or self_link of the Google Compute Engine subnetwork in which
+  The name or `self_link` of the Google Compute Engine subnetwork in which
   the cluster's instances are launched.
 
-- [**`name`**](#var-name): *(**Required** `string`)*<a name="var-name"></a>
+- [**`networking_mode`**](#var-networking_mode): *(Optional `string`)*<a name="var-networking_mode"></a>
 
-  The name of the cluster.
+  Determines whether alias IPs or routes will be used for pod IPs in
+  the cluster. Options are `VPC_NATIVE` or `ROUTES`. `VPC_NATIVE`
+  enables IP aliasing, and requires the `ip_allocation_policy` block to
+  be defined.
+
+  Default is `"VPC_NATIVE"`.
+
+- [**`project`**](#var-project): *(Optional `string`)*<a name="var-project"></a>
+
+  The ID of the project in which the resource belongs.
+  If it is not set, the provider project is used.
 
 - [**`rbac_security_identity_group`**](#var-rbac_security_identity_group): *(Optional `string`)*<a name="var-rbac_security_identity_group"></a>
 
   The name of the RBAC security identity group for use with Google
   security groups in Kubernetes RBAC. Group name must be in format
   `gke-security-groups@yourdomain.com`.
+  For details please see
+  https://cloud.google.com/kubernetes-engine/docs/how-to/google-groups-rbac
 
-- [**`min_master_version`**](#var-min_master_version): *(**Required** `string`)*<a name="var-min_master_version"></a>
+- [**`min_master_version`**](#var-min_master_version): *(Optional `string`)*<a name="var-min_master_version"></a>
 
   The Kubernetes minimal version of the masters. If set to `latest` it
   will pull latest available version in the selected region.
 
-- [**`cluster_secondary_range_name`**](#var-cluster_secondary_range_name): *(**Required** `string`)*<a name="var-cluster_secondary_range_name"></a>
+- [**`cluster_ipv4_cidr`**](#var-cluster_ipv4_cidr): *(Optional `string`)*<a name="var-cluster_ipv4_cidr"></a>
 
-  The name of the secondary subnet ip range to use for pods.
+  The IP address range of the Kubernetes pods in this cluster in CIDR
+  notation (e.g. `10.96.0.0/14`). Leave blank to have one automatically
+  chosen or specify a `/14` block in `10.0.0.0/8`.
+  **Note:** This field will only work for routes-based clusters, where
+  `ip_allocation_policy` is not defined.
 
-- [**`services_secondary_range_name`**](#var-services_secondary_range_name): *(**Required** `string`)*<a name="var-services_secondary_range_name"></a>
+- [**`ip_allocation_policy`**](#var-ip_allocation_policy): *(Optional `object(ip_allocation_policy)`)*<a name="var-ip_allocation_policy"></a>
 
-  The name of the secondary subnet range to use for services.
+  Configuration of cluster IP allocation for VPC-native clusters.
+  Adding this block enables IP aliasing, making the cluster VPC-native
+  instead of routes-based.
+
+  Example:
+
+  ```hcl
+  readme_example = {
+    cluster_ipv4_cidr_block  = "10.4.128.0/17"
+    services_ipv4_cidr_block = "10.4.112.0/20"
+  }
+  ```
+
+  The `ip_allocation_policy` object accepts the following attributes:
+
+  - [**`cluster_ipv4_cidr_block`**](#attr-ip_allocation_policy-cluster_ipv4_cidr_block): *(Optional `string`)*<a name="attr-ip_allocation_policy-cluster_ipv4_cidr_block"></a>
+
+    The IP address range for the cluster pod IPs.
+    Set to blank to have a range chosen with the default size.
+    Set to /netmask (e.g. `/14`) to have a range chosen with a specific netmask.
+    Set to a CIDR notation (e.g. `10.96.0.0/14`) from the RFC-1918
+    private networks (e.g. `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`)
+    to pick a specific range to use.
+    Conflicts with `cluster_secondary_range_name`.
+
+  - [**`services_ipv4_cidr_block`**](#attr-ip_allocation_policy-services_ipv4_cidr_block): *(Optional `string`)*<a name="attr-ip_allocation_policy-services_ipv4_cidr_block"></a>
+
+    The IP address range of the services IPs in this cluster.
+    Set to blank to have a range chosen with the default size.
+    Set to /netmask (e.g. `/14`) to have a range chosen with a specific
+    netmask. Set to a CIDR notation (e.g. `10.96.0.0/14`) from the
+    RFC-1918 private networks (e.g. `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`)
+    to pick a specific range to use.
+    Conflicts with `cluster_secondary_range_name`.
+
+  - [**`cluster_secondary_range_name`**](#attr-ip_allocation_policy-cluster_secondary_range_name): *(Optional `string`)*<a name="attr-ip_allocation_policy-cluster_secondary_range_name"></a>
+
+    The name of the existing secondary range in the cluster's subnetwork
+    to use for pod IP addresses. Alternatively, `cluster_ipv4_cidr_block`
+    can be used to automatically create a GKE-managed one.
+    Conflicts with `cluster_ipv4_cidr_block`.
+
+  - [**`services_secondary_range_name`**](#attr-ip_allocation_policy-services_secondary_range_name): *(Optional `string`)*<a name="attr-ip_allocation_policy-services_secondary_range_name"></a>
+
+    The name of the existing secondary range in the cluster's subnetwork
+    to use for service `ClusterIPs`. Alternatively, `services_ipv4_cidr_block`
+    can be used to automatically create a GKE-managed one.
+    Conflicts with `services_ipv4_cidr_block`.
 
 - [**`description`**](#var-description): *(Optional `string`)*<a name="var-description"></a>
 
@@ -121,51 +185,79 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`node_locations`**](#var-node_locations): *(Optional `set(string)`)*<a name="var-node_locations"></a>
 
-  A set of zones used for node locations.
+  A set of zones in which the cluster's nodes are located.
+  Nodes must be in the region of their regional cluster or in the same
+  region as their cluster's zone for zonal clusters.
+  If this is specified for a zonal cluster, omit the cluster's zone.
 
   Default is `[]`.
 
-- [**`master_authorized_networks_cidr_blocks`**](#var-master_authorized_networks_cidr_blocks): *(Optional `list(master_authorized_networks_cidr_block)`)*<a name="var-master_authorized_networks_cidr_blocks"></a>
+- [**`master_authorized_networks_config`**](#var-master_authorized_networks_config): *(Optional `object(master_authorized_networks_config)`)*<a name="var-master_authorized_networks_config"></a>
 
-  Set of master authorized networks. If none are provided, disallow
-  external access (except the cluster node IPs, which GKE automatically
-  whitelists).
+  Configuration for handling external access control plane of the cluster.
 
-  Default is `[]`.
+  Example:
 
-  Each `master_authorized_networks_cidr_block` object in the list accepts the following attributes:
+  ```hcl
+  master_authorized_networks_config = {
+    cidr_blocks = [
+      {
+        display_name = "Berlin Office"
+        cidr_block   = "10.4.112.0/20"
+      }
+    ]
+  }
+  ```
 
-  - [**`cidr_block`**](#attr-master_authorized_networks_cidr_blocks-cidr_block): *(**Required** `string`)*<a name="attr-master_authorized_networks_cidr_blocks-cidr_block"></a>
+  The `master_authorized_networks_config` object accepts the following attributes:
 
-    External network that can access Kubernetes master through HTTPS.
-    Must be specified in CIDR notation.
+  - [**`cidr_blocks`**](#attr-master_authorized_networks_config-cidr_blocks): *(Optional `list(cidr_block)`)*<a name="attr-master_authorized_networks_config-cidr_blocks"></a>
 
-  - [**`display_name`**](#attr-master_authorized_networks_cidr_blocks-display_name): *(Optional `string`)*<a name="attr-master_authorized_networks_cidr_blocks-display_name"></a>
+    Set of master authorized networks. If none are provided, disallow
+    external access (except the cluster node IPs, which GKE automatically
+    whitelists).
 
-    Field for users to identify CIDR blocks.
+    Default is `[]`.
 
-- [**`vertical_pod_autoscaling_enabled`**](#var-vertical_pod_autoscaling_enabled): *(Optional `bool`)*<a name="var-vertical_pod_autoscaling_enabled"></a>
+    Each `cidr_block` object in the list accepts the following attributes:
 
-  Vertical Pod Autoscaling automatically adjusts the resources of pods
-  controlled by it.
+    - [**`cidr_block`**](#attr-master_authorized_networks_config-cidr_blocks-cidr_block): *(**Required** `string`)*<a name="attr-master_authorized_networks_config-cidr_blocks-cidr_block"></a>
+
+      External network that can access Kubernetes master through HTTPS.
+      Must be specified in CIDR notation.
+
+    - [**`display_name`**](#attr-master_authorized_networks_config-cidr_blocks-display_name): *(Optional `string`)*<a name="attr-master_authorized_networks_config-cidr_blocks-display_name"></a>
+
+      Field for users to identify CIDR blocks.
+
+- [**`enabled_vertical_pod_autoscaling`**](#var-enabled_vertical_pod_autoscaling): *(Optional `bool`)*<a name="var-enabled_vertical_pod_autoscaling"></a>
+
+  If enabled, Vertical Pod Autoscaling automatically adjusts the
+  resources of pods controlled by it.
 
   Default is `false`.
 
 - [**`addon_horizontal_pod_autoscaling`**](#var-addon_horizontal_pod_autoscaling): *(Optional `bool`)*<a name="var-addon_horizontal_pod_autoscaling"></a>
 
-  Enable horizontal pod autoscaling addon.
+  Whether to enable the horizontal pod autoscaling addon.
 
   Default is `true`.
 
 - [**`addon_http_load_balancing`**](#var-addon_http_load_balancing): *(Optional `bool`)*<a name="var-addon_http_load_balancing"></a>
 
-  Enable httpload balancer addon.
+  Whether to enable the httpload balancer addon.
 
   Default is `true`.
 
 - [**`addon_network_policy_config`**](#var-addon_network_policy_config): *(Optional `bool`)*<a name="var-addon_network_policy_config"></a>
 
-  Enable network policy addon.
+  Whether to enable the network policy addon.
+
+  Default is `false`.
+
+- [**`addon_cloudrun_config`**](#var-addon_cloudrun_config): *(Optional `bool`)*<a name="var-addon_cloudrun_config"></a>
+
+  Whether to enable the network policy addon.
 
   Default is `false`.
 
@@ -175,27 +267,133 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   The `network_policy` object accepts the following attributes:
 
-  - [**`provider`**](#attr-network_policy-provider): *(**Required** `string`)*<a name="attr-network_policy-provider"></a>
-
-    Whether network policy is enabled on the cluster.
-
   - [**`enabled`**](#attr-network_policy-enabled): *(Optional `bool`)*<a name="attr-network_policy-enabled"></a>
 
     The selected network policy provider.
 
-    Default is `"PROVIDER_UNSPECIFIED"`.
+  - [**`provider`**](#attr-network_policy-provider): *(Optional `string`)*<a name="attr-network_policy-provider"></a>
 
-- [**`maintenance_start_time`**](#var-maintenance_start_time): *(Optional `string`)*<a name="var-maintenance_start_time"></a>
+    Whether network policy is enabled on the cluster.
 
-  Time window specified for daily or recurring maintenance operations in
-  RFC3339 format. Default is midnight UTC.
+    Default is `"CALICO"`.
 
-  Default is `"00:00"`.
+- [**`maintenance_policy`**](#var-maintenance_policy): *(Optional `object(maintenance_policy)`)*<a name="var-maintenance_policy"></a>
+
+  The maintenance policy to use for the cluster.
+
+  The `maintenance_policy` object accepts the following attributes:
+
+  - [**`daily_maintenance_window`**](#attr-maintenance_policy-daily_maintenance_window): *(Optional `object(daily_maintenance_window)`)*<a name="attr-maintenance_policy-daily_maintenance_window"></a>
+
+    Time window specified for daily maintenance operations.
+    For details please see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#daily_maintenance_window
+
+    Example:
+
+    ```hcl
+    maintenance_policy = {
+      daily_maintenance_window = {
+        start_time = "03:00"
+      }
+    }
+    ```
+
+    The `daily_maintenance_window` object accepts the following attributes:
+
+    - [**`start_time`**](#attr-maintenance_policy-daily_maintenance_window-start_time): *(**Required** `string`)*<a name="attr-maintenance_policy-daily_maintenance_window-start_time"></a>
+
+      Specify the `start_time` for a daily maintenance window in
+      RFC3339 format `HH:MM`, where HH : [00-23] and MM : [00-59] GMT.
+
+  - [**`recurring_window`**](#attr-maintenance_policy-recurring_window): *(Optional `object(recurring_window)`)*<a name="attr-maintenance_policy-recurring_window"></a>
+
+    Time window specified for recurring maintenance operations.
+    For details please see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#recurring_window
+
+    Example:
+
+    ```hcl
+    maintenance_policy = {
+      recurring_window = {
+        start_time = "2022-01-01T09:00:00Z"
+        end_time   = "2022-01-01T17:00:00Z"
+        recurrence = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"
+      }
+    }
+    ```
+
+    The `recurring_window` object accepts the following attributes:
+
+    - [**`start_time`**](#attr-maintenance_policy-recurring_window-start_time): *(**Required** `string`)*<a name="attr-maintenance_policy-recurring_window-start_time"></a>
+
+      Specify `start_time` and in RFC3339 "Zulu" date format.
+      The start time's date is the initial date that the window starts.
+
+    - [**`end_time`**](#attr-maintenance_policy-recurring_window-end_time): *(**Required** `string`)*<a name="attr-maintenance_policy-recurring_window-end_time"></a>
+
+      Specify `end_time` in RFC3339 "Zulu" date format.
+      The end time is used for calculating duration.
+
+    - [**`recurrence`**](#attr-maintenance_policy-recurring_window-recurrence): *(**Required** `string`)*<a name="attr-maintenance_policy-recurring_window-recurrence"></a>
+
+      Specify recurrence in [RFC5545](https://datatracker.ietf.org/doc/html/rfc5545#section-3.8.5.3)
+      RRULE format, to specify when this maintenance window recurs.
+
+  - [**`maintenance_exclusion`**](#attr-maintenance_policy-maintenance_exclusion): *(Optional `list(maintenance_exclusion)`)*<a name="attr-maintenance_policy-maintenance_exclusion"></a>
+
+    Exceptions to maintenance window. Non-emergency maintenance should
+    not occur in these windows. A cluster can have up to three
+    maintenance exclusions at a time.
+    For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions
+
+    Example:
+
+    ```hcl
+    maintenance_policy = {
+      recurring_window = {
+        start_time = "2022-01-01T00:00:00Z"
+        end_time   = "2022-01-02T00:00:00Z"
+        recurrence = "FREQ=DAILY"
+      }
+      maintenance_exclusion = {
+        exclusion_name = "batch job"
+        start_time     = "2022-01-01T00:00:00Z"
+        end_time       = "2022-01-02T00:00:00Z"
+      }
+      maintenance_exclusion = {
+        exclusion_name = "holiday data load"
+        start_time     = "2022-05-01T00:00:00Z"
+        end_time       = "2022-05-02T00:00:00Z"
+      }
+    }
+    ```
+
+    Each `maintenance_exclusion` object in the list accepts the following attributes:
+
+    - [**`exclusion_name`**](#attr-maintenance_policy-maintenance_exclusion-exclusion_name): *(**Required** `string`)*<a name="attr-maintenance_policy-maintenance_exclusion-exclusion_name"></a>
+
+      The name of the maintenance exclusion window.
+
+    - [**`start_time`**](#attr-maintenance_policy-maintenance_exclusion-start_time): *(**Required** `string`)*<a name="attr-maintenance_policy-maintenance_exclusion-start_time"></a>
+
+      Specify `start_time` and in RFC3339 "Zulu" date format.
+      The start time's date is the initial date that the window starts.
+
+    - [**`end_time`**](#attr-maintenance_policy-maintenance_exclusion-end_time): *(**Required** `string`)*<a name="attr-maintenance_policy-maintenance_exclusion-end_time"></a>
+
+      Specify `end_time` in RFC3339 "Zulu" date format.
+      The end time is used for calculating duration.
 
 - [**`resource_usage_export_bigquery_dataset_id`**](#var-resource_usage_export_bigquery_dataset_id): *(Optional `string`)*<a name="var-resource_usage_export_bigquery_dataset_id"></a>
 
   The ID of a BigQuery Dataset for using BigQuery as the destination of
   resource usage export.
+
+- [**`enable_confidential_nodes`**](#var-enable_confidential_nodes): *(Optional `bool`)*<a name="var-enable_confidential_nodes"></a>
+
+  Whether to enable Confidential Nodes for this cluster.
+
+  Default is `false`.
 
 - [**`enable_network_egress_metering`**](#var-enable_network_egress_metering): *(Optional `bool`)*<a name="var-enable_network_egress_metering"></a>
 
@@ -216,46 +414,58 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`cluster_autoscaling`**](#var-cluster_autoscaling): *(Optional `object(cluster_autoscaling)`)*<a name="var-cluster_autoscaling"></a>
 
-  Cluster autoscaling configuration. For more info see 
-  [documentation](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling)
+  Cluster autoscaling configuration. For details please see
+  https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling
 
-  Default is `{}`.
+  Default is `false`.
 
   The `cluster_autoscaling` object accepts the following attributes:
 
-  - [**`enable`**](#attr-cluster_autoscaling-enable): *(**Required** `bool`)*<a name="attr-cluster_autoscaling-enable"></a>
+  - [**`enabled`**](#attr-cluster_autoscaling-enabled): *(Optional `bool`)*<a name="attr-cluster_autoscaling-enabled"></a>
 
     Whether node auto-provisioning is enabled. Resource limits for cpu
     and memory must be defined to enable node auto-provisioning.
 
-  - [**`resource_limits`**](#attr-cluster_autoscaling-resource_limits): *(Optional `list(resource_limit)`)*<a name="attr-cluster_autoscaling-resource_limits"></a>
+    Default is `false`.
 
-    Global constraints for machine resources in the cluster. Configuring
-    the `cpu` and `memory` types is required if node auto-provisioning
-    is enabled. These limits will apply to node pool autoscaling in
-    addition to node auto-provisioning.
+  - [**`cpu`**](#attr-cluster_autoscaling-cpu): *(Optional `object(cpu)`)*<a name="attr-cluster_autoscaling-cpu"></a>
 
-    Each `resource_limit` object in the list accepts the following attributes:
+    Global constraints for CPU machine resources in the cluster.
+    Configuring this is required if node auto-provisioning is enabled.
+    These limits will apply to node pool autoscaling in addition to
+    node auto-provisioning.
 
-    - [**`resource_type`**](#attr-cluster_autoscaling-resource_limits-resource_type): *(**Required** `string`)*<a name="attr-cluster_autoscaling-resource_limits-resource_type"></a>
+    The `cpu` object accepts the following attributes:
 
-      The type of the resource. For example, `cpu` and `memory`. See the
-      [guide to using Node Auto-Provisioning](https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-provisioning)
-      for a list of types.
+    - [**`minimum`**](#attr-cluster_autoscaling-cpu-minimum): *(Optional `number`)*<a name="attr-cluster_autoscaling-cpu-minimum"></a>
 
-    - [**`maximum`**](#attr-cluster_autoscaling-resource_limits-maximum): *(Optional `number`)*<a name="attr-cluster_autoscaling-resource_limits-maximum"></a>
+      Minimum amount of CPU resources in the cluster.
 
-      Maximum amount of the resource in the cluster.
+    - [**`maximum`**](#attr-cluster_autoscaling-cpu-maximum): *(Optional `number`)*<a name="attr-cluster_autoscaling-cpu-maximum"></a>
 
-    - [**`minimum`**](#attr-cluster_autoscaling-resource_limits-minimum): *(Optional `number`)*<a name="attr-cluster_autoscaling-resource_limits-minimum"></a>
+      Maximum amount of CPU resources in the cluster.
 
-      Minimum amount of the resource in the cluster.
+  - [**`memory`**](#attr-cluster_autoscaling-memory): *(Optional `object(memory)`)*<a name="attr-cluster_autoscaling-memory"></a>
 
-  - [**`auto_provisioning_defaults`**](#attr-cluster_autoscaling-auto_provisioning_defaults): *(Optional `list(auto_provisioning_default)`)*<a name="attr-cluster_autoscaling-auto_provisioning_defaults"></a>
+    Global constraints for Memory resources in the cluster. Configuring
+    this is required if node auto-provisioning is enabled. These limits
+    will apply to node pool autoscaling in addition to node auto-provisioning.
+
+    The `memory` object accepts the following attributes:
+
+    - [**`minimum`**](#attr-cluster_autoscaling-memory-minimum): *(Optional `number`)*<a name="attr-cluster_autoscaling-memory-minimum"></a>
+
+      Minimum amount of memory resources in the cluster.
+
+    - [**`maximum`**](#attr-cluster_autoscaling-memory-maximum): *(Optional `number`)*<a name="attr-cluster_autoscaling-memory-maximum"></a>
+
+      Maximum amount of memory resources in the cluster.
+
+  - [**`auto_provisioning_defaults`**](#attr-cluster_autoscaling-auto_provisioning_defaults): *(Optional `object(auto_provisioning_default)`)*<a name="attr-cluster_autoscaling-auto_provisioning_defaults"></a>
 
     Contains defaults for a node pool created by NAP.
 
-    Each `auto_provisioning_default` object in the list accepts the following attributes:
+    The `auto_provisioning_default` object accepts the following attributes:
 
     - [**`oauth_scopes`**](#attr-cluster_autoscaling-auto_provisioning_defaults-oauth_scopes): *(Optional `list(string)`)*<a name="attr-cluster_autoscaling-auto_provisioning_defaults-oauth_scopes"></a>
 
@@ -263,13 +473,16 @@ See [variables.tf] and [examples/] for details and use-cases.
       https://www.googleapis.com/auth/cloud-platform scope to grant
       access to all APIs. It is recommended that you set
       `service_account` to a non-default service account and grant IAM
-      roles to that service account for only the resources that it
-      needs.
+      roles to that service account for only the resources that it needs.
 
     - [**`service_account`**](#attr-cluster_autoscaling-auto_provisioning_defaults-service_account): *(Optional `string`)*<a name="attr-cluster_autoscaling-auto_provisioning_defaults-service_account"></a>
 
-      The Google Cloud Platform Service Account to be used by the
-      node VMs.
+      The Google Cloud Platform Service Account to be used by the node VMs.
+
+- [**`logging_enable_components`**](#var-logging_enable_components): *(Optional `string`)*<a name="var-logging_enable_components"></a>
+
+  The GKE components exposing logs.
+  Supported values include: `SYSTEM_COMPONENTS` and `WORKLOADS`.
 
 - [**`logging_service`**](#var-logging_service): *(Optional `string`)*<a name="var-logging_service"></a>
 
@@ -277,6 +490,11 @@ See [variables.tf] and [examples/] for details and use-cases.
   options include `logging.googleapis.com`, and `none`.
 
   Default is `"logging.googleapis.com/kubernetes"`.
+
+- [**`monitoring_enable_components`**](#var-monitoring_enable_components): *(Optional `string`)*<a name="var-monitoring_enable_components"></a>
+
+  The GKE components exposing logs. Supported values include: `SYSTEM_COMPONENTS`
+  and in beta provider, both `SYSTEM_COMPONENTS` and `WORKLOADS` are supported.
 
 - [**`monitoring_service`**](#var-monitoring_service): *(Optional `string`)*<a name="var-monitoring_service"></a>
 
@@ -301,13 +519,34 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `110`.
 
-- [**`enable_private_endpoint`**](#var-enable_private_endpoint): *(Optional `bool`)*<a name="var-enable_private_endpoint"></a>
+- [**`enable_intranode_visibility`**](#var-enable_intranode_visibility): *(Optional `bool`)*<a name="var-enable_intranode_visibility"></a>
 
-  Whether nodes have internal IP addresses only.
+  Whether Intra-node visibility is enabled for this cluster.
+  This makes same node pod to pod traffic visible for VPC network.
 
   Default is `false`.
 
-- [**`master_ipv4_cidr_block`**](#var-master_ipv4_cidr_block): *(**Required** `string`)*<a name="var-master_ipv4_cidr_block"></a>
+- [**`enable_private_endpoint`**](#var-enable_private_endpoint): *(Optional `bool`)*<a name="var-enable_private_endpoint"></a>
+
+  Whether the master's internal IP address is used as the cluster endpoint.
+
+  Default is `false`.
+
+- [**`enable_private_nodes`**](#var-enable_private_nodes): *(Optional `bool`)*<a name="var-enable_private_nodes"></a>
+
+  Whether nodes have internal IP addresses only.
+
+  Default is `true`.
+
+- [**`private_ipv6_google_access`**](#var-private_ipv6_google_access): *(Optional `string`)*<a name="var-private_ipv6_google_access"></a>
+
+  Configures the IPv6 connectivity to Google Services.
+  By default, no private IPv6 access to or from Google Services is
+  enabled (all access will be via IPv4).
+  Accepted values are `PRIVATE_IPV6_GOOGLE_ACCESS_UNSPECIFIED`,
+  `INHERIT_FROM_SUBNETWORK`, `OUTBOUND`, and `BIDIRECTIONAL`.
+
+- [**`master_ipv4_cidr_block`**](#var-master_ipv4_cidr_block): *(Optional `string`)*<a name="var-master_ipv4_cidr_block"></a>
 
   The IP range in CIDR notation to use for the hosted master network.
 
@@ -326,13 +565,13 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`enable_shielded_nodes`**](#var-enable_shielded_nodes): *(Optional `bool`)*<a name="var-enable_shielded_nodes"></a>
 
-  Enable Shielded Nodes features on all nodes in this cluster.
+  Whether to enable Shielded Nodes features on all nodes in this cluster.
 
-  Default is `false`.
+  Default is `true`.
 
 - [**`enable_binary_authorization`**](#var-enable_binary_authorization): *(Optional `bool`)*<a name="var-enable_binary_authorization"></a>
 
-  Enable BinAuthZ Admission controller.
+  Whether to enable BinAuthZ Admission controller.
 
   Default is `false`.
 
@@ -355,10 +594,10 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   ```hcl
   module_timeouts = {
-    null_resource = {
-      create = "4m"
-      update = "4m"
-      delete = "4m"
+    google_container_cluster = {
+      create = "60m"
+      update = "60m"
+      delete = "60m"
     }
   }
   ```

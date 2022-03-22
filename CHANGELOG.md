@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Rename `maintenance_exclusion` attribute to `maintenance_exclusions` in `recurring_window` maintenance policy
+- Update README and add missing variables
 
 ### Fixed
 
