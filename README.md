@@ -269,11 +269,13 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   - [**`enabled`**](#attr-network_policy-enabled): *(Optional `bool`)*<a name="attr-network_policy-enabled"></a>
 
-    The selected network policy provider.
+    Whether network policy is enabled on the cluster.
+
+    Default is `false`.
 
   - [**`provider`**](#attr-network_policy-provider): *(Optional `string`)*<a name="attr-network_policy-provider"></a>
 
-    Whether network policy is enabled on the cluster.
+    The selected network policy provider.
 
     Default is `"CALICO"`.
 

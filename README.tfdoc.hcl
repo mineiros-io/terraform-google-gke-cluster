@@ -349,8 +349,9 @@ section {
 
         attribute "enabled" {
           type        = bool
+          default     = false
           description = <<-END
-            The selected network policy provider.
+            Whether network policy is enabled on the cluster.
           END
         }
 
@@ -358,7 +359,7 @@ section {
           type        = string
 					default     = "CALICO"
           description = <<-END
-            Whether network policy is enabled on the cluster.
+            The selected network policy provider.
           END
         }
       }
@@ -540,7 +541,7 @@ section {
 
         attribute "enabled" {
           type        = bool
-					default     = false
+          default     = false
           description = <<-END
             Whether node auto-provisioning is enabled. Resource limits for cpu
             and memory must be defined to enable node auto-provisioning.

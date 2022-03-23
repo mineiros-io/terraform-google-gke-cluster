@@ -50,7 +50,7 @@ resource "google_container_cluster" "cluster" {
     for_each = var.network_policy != null ? [var.network_policy] : []
 
     content {
-      enabled  = network_policy.value.enabled
+      enabled  = try(network_policy.value.enabled, false)
       provider = try(network_policy.value.provider, "CALICO")
     }
   }
