@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add variable validation for `networking_mode`, `logging_enable_components`, `logging_service`, `monitoring_enable_components` and `release_channel`.
 - Add unit-tests
 
+### Changed
+
+- Rename `maintenance_exclusion` attribute to `maintenance_exclusions` in `recurring_window` maintenance policy
+
 ### Fixed
 
 - Wrap `name` output in `try` to ensure integrity when `module_enabled = false`

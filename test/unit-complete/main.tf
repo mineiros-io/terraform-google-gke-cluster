@@ -115,12 +115,35 @@ module "test" {
     "${var.region}-a",
     "${var.region}-b",
   ]
+
   master_ipv4_cidr_block = "10.4.96.0/28"
+
   ip_allocation_policy = {
     cluster_secondary_range_name  = local.subnet.secondary_ip_ranges.pods.name
     services_secondary_range_name = local.subnet.secondary_ip_ranges.services.name
   }
+
   location = var.region # creates a regional cluster, for details please see https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
+
+  maintenance_policy = {
+    recurring_window = {
+      start_time = "2022-01-01T00:00:00Z"
+      end_time   = "2030-01-02T00:00:00Z"
+      recurrence = "FREQ=DAILY"
+    }
+    maintenance_exclusions = [
+      {
+        exclusion_name = "batch job"
+        start_time     = "2025-01-01T00:00:00Z"
+        end_time       = "2025-01-02T00:00:00Z"
+      },
+      {
+        exclusion_name = "holiday data load"
+        start_time     = "2025-05-01T00:00:00Z"
+        end_time       = "2025-05-02T00:00:00Z"
+      }
+    ]
+  }
 
   module_timeouts = {
     google_container_cluster = {
