@@ -12,10 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add all missing attributes available in google provider `v4.1`
 - Add variable validation for `networking_mode`, `logging_enable_components`, `logging_service`, `monitoring_enable_components` and `release_channel`.
 - Add unit-tests
+- Add default values for `enable_intranode_visibility` and `private_ipv6_google_access`
 
 ### Changed
 
 - Rename `maintenance_exclusion` attribute to `maintenance_exclusions` in `recurring_window` maintenance policy
+- Update README and add missing variables
+- Disable the `network_policy` block per default
 
 ### Fixed
 

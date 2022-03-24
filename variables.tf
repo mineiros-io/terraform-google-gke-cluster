@@ -10,12 +10,12 @@ variable "name" {
 
 variable "network" {
   type        = string
-  description = "(Required) The name or `self_link` of the Google Compute Engine network to which the cluster is connected. For Shared VPC, set this to the self link of the shared network."
+  description = "(Required) The name or 'self_link' of the Google Compute Engine network to which the cluster is connected. For Shared VPC, set this to the self link of the shared network."
 }
 
 variable "subnetwork" {
   type        = string
-  description = "(Required) The name or `self_link` of the Google Compute Engine subnetwork in which the cluster's instances are launched."
+  description = "(Required) The name or 'self_link' of the Google Compute Engine subnetwork in which the cluster's instances are launched."
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -31,25 +31,25 @@ variable "project" {
 
 variable "addon_horizontal_pod_autoscaling" {
   type        = bool
-  description = "(Optional) Enable horizontal pod autoscaling addon."
+  description = "(Optional) Whether to enable the horizontal pod autoscaling addon."
   default     = true
 }
 
 variable "addon_http_load_balancing" {
   type        = bool
-  description = "(Optional) Enable httpload balancer addon."
+  description = "(Optional) Whether to enable the httpload balancer addon."
   default     = true
 }
 
 variable "addon_network_policy_config" {
   type        = bool
-  description = "(Optional) Enable network policy addon."
+  description = "(Optional) Whether to enable the network policy addon."
   default     = false
 }
 
 variable "addon_cloudrun_config" {
   type        = bool
-  description = "(Optional) Enable network policy addon."
+  description = "(Optional) Whether to enable the CloudRun addon."
   default     = false
 }
 
@@ -180,7 +180,7 @@ variable "networking_mode" {
 
 variable "logging_enable_components" {
   type        = string
-  description = "(Optional) The GKE components exposing logs. Supported values include: `SYSTEM_COMPONENTS` and `WORKLOADS`."
+  description = "(Optional) The GKE components exposing logs. Supported values include: 'SYSTEM_COMPONENTS' and 'WORKLOADS'."
   default     = null
 
   validation {
@@ -191,7 +191,7 @@ variable "logging_enable_components" {
 
 variable "logging_service" {
   type        = string
-  description = "(Optional) The logging service that the cluster should write logs to. Available options include logging.googleapis.com, logging.googleapis.com/kubernetes (beta), and none"
+  description = "(Optional) The logging service that the cluster should write logs to. Available options include 'logging.googleapis.com', 'logging.googleapis.com/kubernetes' (beta), and 'none'"
   default     = "logging.googleapis.com/kubernetes"
 
   validation {
@@ -203,7 +203,7 @@ variable "logging_service" {
 
 variable "monitoring_enable_components" {
   type        = string
-  description = "(Optional) The GKE components exposing logs. `SYSTEM_COMPONENTS` and in beta provider, both `SYSTEM_COMPONENTS` and `WORKLOADS` are supported."
+  description = "(Optional) The GKE components exposing logs. Supported values include: 'SYSTEM_COMPONENTS' and in beta provider, both 'SYSTEM_COMPONENTS' and 'WORKLOADS' are supported."
   default     = null
 
   validation {
@@ -236,7 +236,7 @@ variable "maintenance_policy" {
   #     recurrence = string
   #   }))
   #   # (Optional) Exceptions to maintenance window. Non-emergency maintenance should not occur in these windows. A cluster can have up to three maintenance exclusions at a time. For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions
-  #   maintenance_exclusion = optional(list(object({
+  #   maintenance_exclusions = optional(list(object({
   #     # (Required) The name of the maintenance exclusion window.
   #     exclusion_name = string
   #     # (Required) Specify `start_time` and in RFC3339 "Zulu" date format. The start time's date is the initial date that the window starts.
@@ -263,29 +263,29 @@ variable "network_policy" {
 
 variable "enable_confidential_nodes" {
   type        = bool
-  description = "(Optional) Enable Confidential Nodes for this cluster."
+  description = "(Optional) Whether to enable Confidential Nodes for this cluster."
   default     = false
 }
 
 variable "rbac_security_identity_group" {
-  description = "(Optional) The name of the RBAC security identity group for use with Google security groups in Kubernetes RBAC. Group name must be in format `gke-security-groups@yourdomain.com`."
+  description = "(Optional) The name of the RBAC security identity group for use with Google security groups in Kubernetes RBAC. Group name must be in format 'gke-security-groups@yourdomain.com'."
   type        = string
   default     = null
 }
 
 variable "min_master_version" {
   type        = string
-  description = "(Optional) The minimum version of the master. GKE will auto-update the master to new versions, so this does not guarantee the current master version --use the read-only `master_version` field to obtain that. If unset, the cluster's version will be set by GKE to the version of the most recent official release (which is not necessarily the latest version)."
+  description = "(Optional) The minimum version of the master. GKE will auto-update the master to new versions, so this does not guarantee the current master version --use the read-only 'master_version' field to obtain that. If unset, the cluster's version will be set by GKE to the version of the most recent official release (which is not necessarily the latest version)."
   default     = null
 }
 
 variable "master_authorized_networks_config" {
   type = any
   # type = object({
-  #   cidr_blocks = object({
+  #   cidr_blocks = list(object({
   #     cidr_block   = string
   #     display_name = optional(string)
-  #   })
+  #   }))
   # })
   description = "(Optional) The desired configuration options for master authorized networks. Omit the nested `cidr_blocks` attribute to disallow external access (except the cluster node IPs, which GKE automatically whitelists)."
   default     = null
@@ -293,7 +293,7 @@ variable "master_authorized_networks_config" {
 
 variable "enabled_vertical_pod_autoscaling" {
   type        = bool
-  description = "(Optional) Vertical Pod Autoscaling automatically adjusts the resources of pods controlled by it."
+  description = "(Optional) If enabled, Vertical Pod Autoscaling automatically adjusts the resources of pods controlled by it."
   default     = false
 }
 
@@ -324,24 +324,29 @@ variable "resource_labels" {
 variable "enable_intranode_visibility" {
   type        = bool
   description = "(Optional) Whether Intra-node visibility is enabled for this cluster. This makes same node pod to pod traffic visible for VPC network."
-  default     = null
+  default     = false
 }
 
 variable "private_ipv6_google_access" {
   type        = string
   description = "(Optional) The desired state of IPv6 connectivity to Google Services. By default, no private IPv6 access to or from Google Services (all access will be via IPv4)."
   default     = null
+
+  validation {
+    condition     = var.private_ipv6_google_access != null ? can(regex("^PRIVATE_IPV6_GOOGLE_ACCESS_UNSPECIFIED|INHERIT_FROM_SUBNETWORK|OUTBOUND|BIDIRECTIONAL$", var.private_ipv6_google_access)) : true
+    error_message = "The private_ipv6_google_access variable must be either set to 'PRIVATE_IPV6_GOOGLE_ACCESS_UNSPECIFIED', 'INHERIT_FROM_SUBNETWORK', 'OUTBOUND', or 'BIDIRECTIONAL'."
+  }
 }
 
 variable "enable_private_endpoint" {
   type        = bool
-  description = "(Optional) Whether the master's internal IP address is used as the cluster endpoint"
+  description = "(Optional) Whether the master's internal IP address is used as the cluster endpoint."
   default     = false
 }
 
 variable "enable_private_nodes" {
   type        = bool
-  description = "(Optional) Whether nodes have internal IP addresses only"
+  description = "(Optional) Whether nodes have internal IP addresses only."
   default     = true
 }
 
