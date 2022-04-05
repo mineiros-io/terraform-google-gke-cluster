@@ -19,7 +19,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "4.1.0"
+      version = "4.4.0"
     }
   }
 }
@@ -92,14 +92,10 @@ module "test" {
   node_locations = [
     "${var.region}-b",
   ]
-  network                = module.vpc.vpc.self_link
-  subnetwork             = module.subnetwork.subnetworks["${var.region}/${local.subnet.name}"].self_link
-  networking_mode        = "VPC_NATIVE"
-  master_ipv4_cidr_block = "10.4.96.0/28"
-  ip_allocation_policy = {
-    cluster_secondary_range_name  = local.subnet.secondary_ip_ranges.pods.name
-    services_secondary_range_name = local.subnet.secondary_ip_ranges.services.name
-  }
+  network              = module.vpc.vpc.self_link
+  subnetwork           = module.subnetwork.subnetworks["${var.region}/${local.subnet.name}"].self_link
+  networking_mode      = "ROUTES"
+  enable_private_nodes = false
 }
 
 # outputs generate non-idempotent terraform plans so we disable them for now unless we need them.

@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   versions prior to this one will default to VPC_NATIVE due to this change,
   and are unable to create ROUTES clusters.
   For details please see https://github.com/hashicorp/terraform-provider-google/blob/main/CHANGELOG.md#440-december-13-2021
+- Minimal unit tests know deploys a Routes based cluster with public nodes
+  instead of a VPC Native cluster with private nodes.
 
 ## [0.0.3]
 
