@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- BREAKING CHANGE: Remove support for google provider `< 4.4` since provider
+  versions prior to this one will default to VPC_NATIVE due to this change,
+  and are unable to create ROUTES clusters.
+  For details please see https://github.com/hashicorp/terraform-provider-google/blob/main/CHANGELOG.md#440-december-13-2021
+
 ## [0.0.3]
 
 ### Added
