@@ -110,7 +110,6 @@ section {
       }
 
       variable "network" {
-        required    = true
         type        = string
         description = <<-END
           The name or `self_link` of the Google Compute Engine network to which
@@ -120,7 +119,6 @@ section {
       }
 
       variable "subnetwork" {
-        required    = true
         type        = string
         description = <<-END
           The name or `self_link` of the Google Compute Engine subnetwork in which

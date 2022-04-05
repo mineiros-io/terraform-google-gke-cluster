@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change `var.network` and `var.subnetwork` to be optional variables
+
 ## [0.0.3]
 
 ### Added

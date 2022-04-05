@@ -8,20 +8,22 @@ variable "name" {
   description = "(Required) The name of the cluster."
 }
 
-variable "network" {
-  type        = string
-  description = "(Required) The name or 'self_link' of the Google Compute Engine network to which the cluster is connected. For Shared VPC, set this to the self link of the shared network."
-}
-
-variable "subnetwork" {
-  type        = string
-  description = "(Required) The name or 'self_link' of the Google Compute Engine subnetwork in which the cluster's instances are launched."
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These variables have defauls, but may be overridden.
 # ----------------------------------------------------------------------------------------------------------------------
+
+variable "network" {
+  type        = string
+  description = "(Optional) The name or 'self_link' of the Google Compute Engine network to which the cluster is connected. For Shared VPC, set this to the self link of the shared network."
+  default     = null
+}
+
+variable "subnetwork" {
+  type        = string
+  description = "(Optional) The name or 'self_link' of the Google Compute Engine subnetwork in which the cluster's instances are launched."
+  default     = null
+}
 
 variable "project" {
   type        = string

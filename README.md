@@ -80,13 +80,13 @@ See [variables.tf] and [examples/] for details and use-cases.
   For the differences between zonal and regional clusters, please see
   https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
 
-- [**`network`**](#var-network): *(**Required** `string`)*<a name="var-network"></a>
+- [**`network`**](#var-network): *(Optional `string`)*<a name="var-network"></a>
 
   The name or `self_link` of the Google Compute Engine network to which
   the cluster is connected. For Shared VPC, set this to the self link of
   the shared network.
 
-- [**`subnetwork`**](#var-subnetwork): *(**Required** `string`)*<a name="var-subnetwork"></a>
+- [**`subnetwork`**](#var-subnetwork): *(Optional `string`)*<a name="var-subnetwork"></a>
 
   The name or `self_link` of the Google Compute Engine subnetwork in which
   the cluster's instances are launched.
