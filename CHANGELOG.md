@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Turn `var.location` to be optional
 - Change `var.network` and `var.subnetwork` to be optional variables
 
 ## [0.0.3]
