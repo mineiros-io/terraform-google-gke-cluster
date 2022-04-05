@@ -99,7 +99,6 @@ module "test" {
   network    = module.vpc.vpc.self_link
   subnetwork = module.subnetwork.subnetworks["${var.region}/${local.subnet.name}"].self_link
 
-  # deploy a public cluster with routes based networking mode
   networking_mode        = "VPC_NATIVE"
   master_ipv4_cidr_block = "10.4.96.0/28"
   ip_allocation_policy = {
