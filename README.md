@@ -260,6 +260,19 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `false`.
 
+- [**`addon_network_policy_config`**](#var-addon_network_policy_config): *(Optional `bool`)*<a name="var-addon_network_policy_config"></a>
+
+  Whether to enable the network policy addon.
+
+  Default is `false`.
+
+- [**`addon_filestore_csi_driver`**](#var-addon_filestore_csi_driver): *(Optional `bool`)*<a name="var-addon_filestore_csi_driver"></a>
+
+  Whether to enable the Filestore CSI driver addon, which allows the
+  usage of filestore instance as volumes.
+
+  Default is `false`.
+
 - [**`addon_cloudrun_config`**](#var-addon_cloudrun_config): *(Optional `bool`)*<a name="var-addon_cloudrun_config"></a>
 
   Whether to enable the network policy addon.

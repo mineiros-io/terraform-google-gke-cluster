@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for `gcp_filestore_csi_driver_config` block
+
 ### Changed
 
 - Turn `var.location` to be optional
 - Change `var.network` and `var.subnetwork` to be optional variables
+- Change minimum required version of google provider to `v4.10.0`
 
 ## [0.0.3]
 

@@ -171,6 +171,10 @@ resource "google_container_cluster" "cluster" {
       disabled = !var.addon_network_policy_config
     }
 
+    gcp_filestore_csi_driver_config {
+      enabled = var.addon_filestore_csi_driver
+    }
+
     cloudrun_config {
       disabled = !var.addon_cloudrun_config
     }

@@ -335,6 +335,23 @@ section {
         END
       }
 
+      variable "addon_network_policy_config" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether to enable the network policy addon.
+        END
+      }
+
+      variable "addon_filestore_csi_driver" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether to enable the Filestore CSI driver addon, which allows the
+          usage of filestore instance as volumes.
+        END
+      }
+
       variable "addon_cloudrun_config" {
         type        = bool
         default     = false
