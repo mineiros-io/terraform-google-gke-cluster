@@ -641,9 +641,9 @@ section {
       }
 
       variable "logging_enable_components" {
-        type        = string
+        type        = set(string)
         description = <<-END
-          The GKE components exposing logs.
+          A list of GKE components exposing logs.
           Supported values include: `SYSTEM_COMPONENTS` and `WORKLOADS`.
         END
       }
@@ -658,10 +658,10 @@ section {
       }
 
       variable "monitoring_enable_components" {
-        type        = string
+        type        = set(string)
         description = <<-END
-          The GKE components exposing logs. Supported values include: `SYSTEM_COMPONENTS`
-          and in beta provider, both `SYSTEM_COMPONENTS` and `WORKLOADS` are supported.
+          A list of GKE components exposing logs.
+          Supported values include: `SYSTEM_COMPONENTS` and `WORKLOADS`.
         END
       }
 

@@ -499,9 +499,9 @@ See [variables.tf] and [examples/] for details and use-cases.
 
       The Google Cloud Platform Service Account to be used by the node VMs.
 
-- [**`logging_enable_components`**](#var-logging_enable_components): *(Optional `string`)*<a name="var-logging_enable_components"></a>
+- [**`logging_enable_components`**](#var-logging_enable_components): *(Optional `set(string)`)*<a name="var-logging_enable_components"></a>
 
-  The GKE components exposing logs.
+  A list of GKE components exposing logs.
   Supported values include: `SYSTEM_COMPONENTS` and `WORKLOADS`.
 
 - [**`logging_service`**](#var-logging_service): *(Optional `string`)*<a name="var-logging_service"></a>
@@ -511,10 +511,10 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `"logging.googleapis.com/kubernetes"`.
 
-- [**`monitoring_enable_components`**](#var-monitoring_enable_components): *(Optional `string`)*<a name="var-monitoring_enable_components"></a>
+- [**`monitoring_enable_components`**](#var-monitoring_enable_components): *(Optional `set(string)`)*<a name="var-monitoring_enable_components"></a>
 
-  The GKE components exposing logs. Supported values include: `SYSTEM_COMPONENTS`
-  and in beta provider, both `SYSTEM_COMPONENTS` and `WORKLOADS` are supported.
+  A list of GKE components exposing logs.
+  Supported values include: `SYSTEM_COMPONENTS` and `WORKLOADS`.
 
 - [**`monitoring_service`**](#var-monitoring_service): *(Optional `string`)*<a name="var-monitoring_service"></a>
 

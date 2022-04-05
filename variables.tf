@@ -187,13 +187,13 @@ variable "networking_mode" {
 }
 
 variable "logging_enable_components" {
-  type        = string
-  description = "(Optional) The GKE components exposing logs. Supported values include: 'SYSTEM_COMPONENTS' and 'WORKLOADS'."
+  type        = set(string)
+  description = "(Optional) A list of GKE components exposing logs. Supported values include: 'SYSTEM_COMPONENTS' and 'WORKLOADS'."
   default     = null
 
   validation {
-    condition     = var.logging_enable_components != null ? can(regex("^SYSTEM_COMPONENTS|WORKLOADS$", var.logging_enable_components)) : true
-    error_message = "The logging_enable_components variable must be either set to 'SYSTEM_COMPONENTS' or 'WORKLOADS'."
+    condition     = var.logging_enable_components != null ? alltrue([for c in var.logging_enable_components : can(regex("^SYSTEM_COMPONENTS|WORKLOADS$", c))]) : true
+    error_message = "The logging_enable_components variable must be a list with the values 'SYSTEM_COMPONENTS' and/or 'WORKLOADS'."
   }
 }
 
@@ -206,17 +206,16 @@ variable "logging_service" {
     condition     = var.logging_service != null ? can(regex("^(logging\\.googleapis\\.com(\\/kubernetes)?)$", var.logging_service)) : true
     error_message = "The logging_service variable must be either set to 'logging.googleapis.com' or 'logging.googleapis.com/kubernetes' (beta)."
   }
-
 }
 
 variable "monitoring_enable_components" {
-  type        = string
-  description = "(Optional) The GKE components exposing logs. Supported values include: 'SYSTEM_COMPONENTS' and in beta provider, both 'SYSTEM_COMPONENTS' and 'WORKLOADS' are supported."
+  type        = set(string)
+  description = "(Optional) A list of GKE components exposing logs. Supported values include: 'SYSTEM_COMPONENTS' and in beta provider, both 'SYSTEM_COMPONENTS' and 'WORKLOADS' are supported."
   default     = null
 
   validation {
-    condition     = var.monitoring_enable_components != null ? can(regex("^SYSTEM_COMPONENTS|WORKLOADS$", var.monitoring_enable_components)) : true
-    error_message = "The monitoring_enable_components variable must be either set to 'SYSTEM_COMPONENTS' or 'WORKLOADS'."
+    condition     = var.monitoring_enable_components != null ? alltrue([for c in var.monitoring_enable_components : can(regex("^SYSTEM_COMPONENTS|WORKLOADS$", c))]) : true
+    error_message = "The monitoring_enable_components variable must be a list with the values 'SYSTEM_COMPONENTS' and/or 'WORKLOADS'."
   }
 }
 
