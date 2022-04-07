@@ -292,7 +292,7 @@ variable "master_authorized_networks_config" {
   default     = null
 }
 
-variable "enabled_vertical_pod_autoscaling" {
+variable "enable_vertical_pod_autoscaling" {
   type        = bool
   description = "(Optional) If enabled, Vertical Pod Autoscaling automatically adjusts the resources of pods controlled by it."
   default     = false

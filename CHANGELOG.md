@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename `maintenance_exclusion` attribute to `maintenance_exclusions` in `recurring_window` maintenance policy
 - Update README and add missing variables
 - Disable the `network_policy` block per default
+- Rename `var.enabled_vertical_pod_autoscaling` to `var.enable_vertical_pod_autoscaling`
 
 ### Fixed
 

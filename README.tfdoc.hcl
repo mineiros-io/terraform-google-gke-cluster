@@ -302,7 +302,7 @@ section {
         }
       }
 
-      variable "enabled_vertical_pod_autoscaling" {
+      variable "enable_vertical_pod_autoscaling" {
         type        = bool
         default     = false
         description = <<-END

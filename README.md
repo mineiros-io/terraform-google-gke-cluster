@@ -235,7 +235,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
       Field for users to identify CIDR blocks.
 
-- [**`enabled_vertical_pod_autoscaling`**](#var-enabled_vertical_pod_autoscaling): *(Optional `bool`)*<a name="var-enabled_vertical_pod_autoscaling"></a>
+- [**`enable_vertical_pod_autoscaling`**](#var-enable_vertical_pod_autoscaling): *(Optional `bool`)*<a name="var-enable_vertical_pod_autoscaling"></a>
 
   If enabled, Vertical Pod Autoscaling automatically adjusts the
   resources of pods controlled by it.
