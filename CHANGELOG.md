@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix types and validation for `var.logging_enable_components` and `var.monitoring_enable_components`
+- Fix `for_each` statement in `master_authorized_networks_config` block
 
 ## [0.0.3]
 

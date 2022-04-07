@@ -144,7 +144,7 @@ resource "google_container_cluster" "cluster" {
 
     content {
       dynamic "cidr_blocks" {
-        for_each = master_authorized_networks_config.value.cidr_blocks
+        for_each = var.master_authorized_networks_config.cidr_blocks
 
         content {
           cidr_block   = cidr_blocks.value.cidr_block
@@ -176,7 +176,8 @@ resource "google_container_cluster" "cluster" {
     }
 
     cloudrun_config {
-      disabled = !var.addon_cloudrun_config
+      disabled           = !var.addon_cloudrun_config
+      load_balancer_type = "LOAD_BALANCER_TYPE_INTERNAL"
     }
   }
 
