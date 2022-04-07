@@ -64,7 +64,7 @@ section {
 
       ```hcl
       module "terraform-google-gke-cluster" {
-        source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.2"
+        source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.4"
 
         project            = "project-id"
         location           = "region"
