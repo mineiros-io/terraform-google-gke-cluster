@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix types and validation for `var.logging_enable_components` and `var.monitoring_enable_components`
+- Fix `for_each` statement in `master_authorized_networks_config` block
+
+### Removed
+
+- Remove support for the `cloudrun_config` block as it is no longer available as a GKE add-on
 
 ## [0.0.3]
 

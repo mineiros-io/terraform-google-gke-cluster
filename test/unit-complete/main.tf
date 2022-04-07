@@ -84,6 +84,13 @@ module "subnetwork" {
   ]
 }
 
+module "service-account" {
+  source = "github.com/mineiros-io/terraform-google-service-account?ref=v0.0.10"
+
+  account_id   = "gke-unit-complete"
+  display_name = "Service Account used in GKE unit test"
+}
+
 # module "router-nat" {
 #   source = "github.com/mineiros-io/terraform-google-cloud-router?ref=v0.0.2"
 
@@ -104,26 +111,76 @@ module "test" {
   module_enabled = true
 
   # add all required arguments
-  name       = "gke-unit-complete"
-  network    = module.vpc.vpc.self_link
-  subnetwork = module.subnetwork.subnetworks["${var.region}/${local.subnet.name}"].self_link
+  name        = "gke-unit-complete"
+  description = "A GKE cluster created as a Unit Test in https://github.com/mineiros-io/terraform-google-gke-cluster"
+  network     = module.vpc.vpc.self_link
+  subnetwork  = module.subnetwork.subnetworks["${var.region}/${local.subnet.name}"].self_link
 
   # add all optional arguments that create additional resources
 
   # add most/all other optional arguments
+
+  # creates a regional cluster, for details please see https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
+  location = var.region
+
+  # configures the zones in which nodes can be deployed in
   node_locations = [
     "${var.region}-a",
     "${var.region}-b",
   ]
 
   master_ipv4_cidr_block = "10.4.96.0/28"
-
+  networking_mode        = "VPC_NATIVE"
   ip_allocation_policy = {
     cluster_secondary_range_name  = local.subnet.secondary_ip_ranges.pods.name
     services_secondary_range_name = local.subnet.secondary_ip_ranges.services.name
   }
 
-  location = var.region # creates a regional cluster, for details please see https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
+  # cluster_ipv4_cidr = local.subnet.secondary_ip_ranges.pods.cidr_range
+  cluster_autoscaling = {
+    enabled = true
+    cpu = {
+      minimum = 1
+      maximum = 4
+    }
+    memory = {
+      minimum = 4
+      maximum = 16
+    }
+    auto_provisioning_defaults = {
+      # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+      service_account = module.service-account.precomputed_email
+      oauth_scopes = [
+        "https://www.googleapis.com/auth/cloud-platform"
+      ]
+    }
+  }
+
+  default_max_pods_per_node   = 110
+  enable_binary_authorization = true
+  enable_kubernetes_alpha     = false
+  enable_tpu                  = true
+  enable_legacy_abac          = true
+  enable_shielded_nodes       = false
+  enable_private_nodes        = true
+  enable_private_endpoint     = true
+  master_authorized_networks_config = {
+    cidr_blocks = [
+      {
+        display_name = "Office"
+        cidr_block   = "192.168.0.0/24"
+      }
+    ]
+  }
+  enable_intranode_visibility = true
+
+  # NOTE: currently, a bug in the provider prevents us from configuring both, logging and monitoring services
+  # for details please see https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/issues/1144
+  # logging_enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+  # logging_service           = "logging.googleapis.com/kubernetes"
+  # monitoring_service           = "monitoring.googleapis.com/kubernetes"
+  # monitoring_enable_components = ["SYSTEM_COMPONENTS"]
+  release_channel = "RAPID"
 
   maintenance_policy = {
     recurring_window = {
@@ -144,6 +201,14 @@ module "test" {
       }
     ]
   }
+
+  addon_horizontal_pod_autoscaling = false
+  addon_http_load_balancing        = false
+  addon_network_policy_config      = false
+  addon_filestore_csi_driver       = true
+  # TODO Remove
+  # https://github.com/mineiros-io/terraform-google-gke-cluster/runs/5869380367?check_suite_focus=true
+  # or add loadbalancer property
 
   module_timeouts = {
     google_container_cluster = {

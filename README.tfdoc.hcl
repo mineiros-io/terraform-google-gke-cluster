@@ -352,14 +352,6 @@ section {
         END
       }
 
-      variable "addon_cloudrun_config" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether to enable the network policy addon.
-        END
-      }
-
       variable "network_policy" {
         type        = object(network_policy)
         description = <<-END
