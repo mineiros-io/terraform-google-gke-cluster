@@ -170,7 +170,6 @@ module "test" {
   enable_tpu                           = true
   enable_legacy_abac                   = true
   enable_shielded_nodes                = false
-  enable_confidential_nodes            = true
   enable_private_nodes                 = true
   enable_private_endpoint              = true
   enable_network_egress_metering       = true

@@ -513,14 +513,6 @@ section {
         END
       }
 
-      variable "enable_confidential_nodes" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether to enable Confidential Nodes for this cluster.
-        END
-      }
-
       variable "enable_network_egress_metering" {
         type        = bool
         default     = false

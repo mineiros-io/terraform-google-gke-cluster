@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Remove support for the `cloudrun_config` block as it is no longer available as a GKE add-on
+- Remove support confidential nodes since it is a beta feature
 
 ## [0.0.3]
 

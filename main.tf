@@ -120,14 +120,6 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
-  dynamic "confidential_nodes" {
-    for_each = var.enable_confidential_nodes != null ? [1] : []
-
-    content {
-      enabled = var.enable_confidential_nodes
-    }
-  }
-
   # --------------------------------------------------------------------------------------------------------------------
   # MASTER AUTHORIZED NETWORKS
   # From the documentation:

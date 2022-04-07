@@ -403,12 +403,6 @@ See [variables.tf] and [examples/] for details and use-cases.
   The ID of a BigQuery Dataset for using BigQuery as the destination of
   resource usage export.
 
-- [**`enable_confidential_nodes`**](#var-enable_confidential_nodes): *(Optional `bool`)*<a name="var-enable_confidential_nodes"></a>
-
-  Whether to enable Confidential Nodes for this cluster.
-
-  Default is `false`.
-
 - [**`enable_network_egress_metering`**](#var-enable_network_egress_metering): *(Optional `bool`)*<a name="var-enable_network_egress_metering"></a>
 
   Whether to enable network egress metering for this cluster. If
