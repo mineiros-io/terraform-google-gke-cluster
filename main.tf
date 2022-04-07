@@ -174,11 +174,6 @@ resource "google_container_cluster" "cluster" {
     gcp_filestore_csi_driver_config {
       enabled = var.addon_filestore_csi_driver
     }
-
-    cloudrun_config {
-      disabled           = !var.addon_cloudrun_config
-      load_balancer_type = "LOAD_BALANCER_TYPE_INTERNAL"
-    }
   }
 
   # --------------------------------------------------------------------------------------------------------------------

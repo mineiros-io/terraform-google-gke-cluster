@@ -273,12 +273,6 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `false`.
 
-- [**`addon_cloudrun_config`**](#var-addon_cloudrun_config): *(Optional `bool`)*<a name="var-addon_cloudrun_config"></a>
-
-  Whether to enable the network policy addon.
-
-  Default is `false`.
-
 - [**`network_policy`**](#var-network_policy): *(Optional `object(network_policy)`)*<a name="var-network_policy"></a>
 
   Configuration options for the NetworkPolicy feature.

@@ -203,13 +203,12 @@ module "test" {
   }
 
   addon_horizontal_pod_autoscaling = false
-  addon_http_load_balancing        = true
+  addon_http_load_balancing        = false
   addon_network_policy_config      = false
   addon_filestore_csi_driver       = true
   # TODO Remove
   # https://github.com/mineiros-io/terraform-google-gke-cluster/runs/5869380367?check_suite_focus=true
   # or add loadbalancer property
-  addon_cloudrun_config = true
 
   module_timeouts = {
     google_container_cluster = {
