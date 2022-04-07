@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change `var.network` and `var.subnetwork` to be optional variables
 - Change minimum required version of google provider to `v4.10.0`
 
+### Fixed
+
+- Fix types and validation for `var.logging_enable_components` and `var.monitoring_enable_components`
+
 ## [0.0.3]
 
 ### Added
