@@ -133,10 +133,13 @@ module "test" {
 
   master_ipv4_cidr_block = "10.4.96.0/28"
   networking_mode        = "VPC_NATIVE"
+
+  addon_network_policy_config = true
   network_policy = {
     enabled  = true
     provider = "CALICO"
   }
+
   ip_allocation_policy = {
     cluster_secondary_range_name  = local.subnet.secondary_ip_ranges.pods.name
     services_secondary_range_name = local.subnet.secondary_ip_ranges.services.name
@@ -214,7 +217,6 @@ module "test" {
 
   addon_horizontal_pod_autoscaling = false
   addon_http_load_balancing        = false
-  addon_network_policy_config      = false
   addon_filestore_csi_driver       = true
   # TODO Remove
   # https://github.com/mineiros-io/terraform-google-gke-cluster/runs/5869380367?check_suite_focus=true
