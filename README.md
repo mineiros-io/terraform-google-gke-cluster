@@ -74,19 +74,24 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   The name of the cluster.
 
-- [**`location`**](#var-location): *(**Required** `string`)*<a name="var-location"></a>
+- [**`location`**](#var-location): *(Optional `string`)*<a name="var-location"></a>
 
-  The location (region or zone) in which the cluster master will be created.
+  The location (region or zone) in which the cluster master will be
+  created, as well as the default node location. If you specify a zone
+  (such as `us-central1-a`), the cluster will be a zonal cluster with
+  a single cluster master. If you specify a region (such as `us-west1`),
+  the cluster will be a regional cluster with multiple masters spread
+  across zones in the region, and with default node locations in those zones as well.
   For the differences between zonal and regional clusters, please see
   https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
 
-- [**`network`**](#var-network): *(**Required** `string`)*<a name="var-network"></a>
+- [**`network`**](#var-network): *(Optional `string`)*<a name="var-network"></a>
 
   The name or `self_link` of the Google Compute Engine network to which
   the cluster is connected. For Shared VPC, set this to the self link of
   the shared network.
 
-- [**`subnetwork`**](#var-subnetwork): *(**Required** `string`)*<a name="var-subnetwork"></a>
+- [**`subnetwork`**](#var-subnetwork): *(Optional `string`)*<a name="var-subnetwork"></a>
 
   The name or `self_link` of the Google Compute Engine subnetwork in which
   the cluster's instances are launched.
@@ -252,6 +257,19 @@ See [variables.tf] and [examples/] for details and use-cases.
 - [**`addon_network_policy_config`**](#var-addon_network_policy_config): *(Optional `bool`)*<a name="var-addon_network_policy_config"></a>
 
   Whether to enable the network policy addon.
+
+  Default is `false`.
+
+- [**`addon_network_policy_config`**](#var-addon_network_policy_config): *(Optional `bool`)*<a name="var-addon_network_policy_config"></a>
+
+  Whether to enable the network policy addon.
+
+  Default is `false`.
+
+- [**`addon_filestore_csi_driver`**](#var-addon_filestore_csi_driver): *(Optional `bool`)*<a name="var-addon_filestore_csi_driver"></a>
+
+  Whether to enable the Filestore CSI driver addon, which allows the
+  usage of filestore instance as volumes.
 
   Default is `false`.
 

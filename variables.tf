@@ -8,20 +8,22 @@ variable "name" {
   description = "(Required) The name of the cluster."
 }
 
-variable "network" {
-  type        = string
-  description = "(Required) The name or 'self_link' of the Google Compute Engine network to which the cluster is connected. For Shared VPC, set this to the self link of the shared network."
-}
-
-variable "subnetwork" {
-  type        = string
-  description = "(Required) The name or 'self_link' of the Google Compute Engine subnetwork in which the cluster's instances are launched."
-}
-
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These variables have defauls, but may be overridden.
 # ----------------------------------------------------------------------------------------------------------------------
+
+variable "network" {
+  type        = string
+  description = "(Optional) The name or 'self_link' of the Google Compute Engine network to which the cluster is connected. For Shared VPC, set this to the self link of the shared network."
+  default     = null
+}
+
+variable "subnetwork" {
+  type        = string
+  description = "(Optional) The name or 'self_link' of the Google Compute Engine subnetwork in which the cluster's instances are launched."
+  default     = null
+}
 
 variable "project" {
   type        = string
@@ -47,6 +49,12 @@ variable "addon_network_policy_config" {
   default     = false
 }
 
+variable "addon_filestore_csi_driver" {
+  type        = bool
+  description = "(Optional) Whether to enable the Filestore CSI driver addon, which allows the usage of filestore instance as volumes."
+  default     = false
+}
+
 variable "addon_cloudrun_config" {
   type        = bool
   description = "(Optional) Whether to enable the CloudRun addon."
@@ -55,7 +63,7 @@ variable "addon_cloudrun_config" {
 
 variable "location" {
   type        = string
-  description = "(Optional) The location (region or zone) in which the cluster master will be created, as well as the default node location. If you specify a zone (such as us-central1-a), the cluster will be a zonal cluster with a single cluster master. If you specify a region (such as us-west1), the cluster will be a regional cluster with multiple masters spread across zones in the region, and with default node locations in those zones as well."
+  description = "(Optional) The location (region or zone) in which the cluster master will be created, as well as the default node location. If you specify a zone (such as 'us-central1-a'), the cluster will be a zonal cluster with a single cluster master. If you specify a region (such as us-west1), the cluster will be a regional cluster with multiple masters spread across zones in the region, and with default node locations in those zones as well."
   default     = null
 }
 

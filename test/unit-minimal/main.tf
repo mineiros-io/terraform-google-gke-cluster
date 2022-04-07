@@ -15,17 +15,25 @@ variable "region" {
   default     = "europe-west3"
 }
 
+variable "zone" {
+  type        = string
+  description = "(Optional) The GCP region zone to create all resources in."
+  default     = "europe-west3-a"
+}
+
 terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "4.1.0"
+      version = "4.10.0"
     }
   }
 }
 
 provider "google" {
   project = var.project
+  region  = var.region
+  zone    = var.zone
 }
 
 # Networking
@@ -87,13 +95,11 @@ module "test" {
   source = "../.."
 
   # add only required arguments and no optional arguments
-  name     = "gke-unit-minimal"
-  location = "${var.region}-a"
-  node_locations = [
-    "${var.region}-b",
-  ]
-  network                = module.vpc.vpc.self_link
-  subnetwork             = module.subnetwork.subnetworks["${var.region}/${local.subnet.name}"].self_link
+  name       = "gke-unit-minimal"
+  network    = module.vpc.vpc.self_link
+  subnetwork = module.subnetwork.subnetworks["${var.region}/${local.subnet.name}"].self_link
+
+  # deploy a public cluster with routes based networking mode
   networking_mode        = "VPC_NATIVE"
   master_ipv4_cidr_block = "10.4.96.0/28"
   ip_allocation_policy = {

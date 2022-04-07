@@ -100,17 +100,20 @@ section {
       }
 
       variable "location" {
-        required    = true
         type        = string
         description = <<-END
-          The location (region or zone) in which the cluster master will be created.
+          The location (region or zone) in which the cluster master will be
+          created, as well as the default node location. If you specify a zone
+          (such as `us-central1-a`), the cluster will be a zonal cluster with
+          a single cluster master. If you specify a region (such as `us-west1`),
+          the cluster will be a regional cluster with multiple masters spread
+          across zones in the region, and with default node locations in those zones as well.
           For the differences between zonal and regional clusters, please see
           https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
         END
       }
 
       variable "network" {
-        required    = true
         type        = string
         description = <<-END
           The name or `self_link` of the Google Compute Engine network to which
@@ -120,7 +123,6 @@ section {
       }
 
       variable "subnetwork" {
-        required    = true
         type        = string
         description = <<-END
           The name or `self_link` of the Google Compute Engine subnetwork in which
@@ -330,6 +332,23 @@ section {
         default     = false
         description = <<-END
           Whether to enable the network policy addon.
+        END
+      }
+
+      variable "addon_network_policy_config" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether to enable the network policy addon.
+        END
+      }
+
+      variable "addon_filestore_csi_driver" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether to enable the Filestore CSI driver addon, which allows the
+          usage of filestore instance as volumes.
         END
       }
 
