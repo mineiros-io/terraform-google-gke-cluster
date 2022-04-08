@@ -146,25 +146,6 @@ module "test" {
   }
 
   # cluster_ipv4_cidr = local.subnet.secondary_ip_ranges.pods.cidr_range
-  cluster_autoscaling = {
-    enabled = true
-    cpu = {
-      minimum = 1
-      maximum = 4
-    }
-    memory = {
-      minimum = 4
-      maximum = 16
-    }
-    auto_provisioning_defaults = {
-      # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-      service_account = module.service-account.precomputed_email
-      oauth_scopes = [
-        "https://www.googleapis.com/auth/cloud-platform"
-      ]
-    }
-  }
-
   rbac_security_identity_group = "gke-security-groups@mineiros.io"
 
   default_max_pods_per_node            = 110

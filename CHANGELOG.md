@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added more comprehensive docs in README.md
 
+### Removed
+
+- Removed `cluster_autoscaling` as it only applies to a clusters default node pool which are not supported by this module.
+
 ## [0.0.4]
 
 ### Added
@@ -79,5 +83,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.0.3]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/mineiros-io/terraform-google-gke-cluster/releases/tag/v0.0.1
-
-

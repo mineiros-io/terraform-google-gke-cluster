@@ -42,6 +42,11 @@ This module implements the following Terraform resources
 
 - `google_container_cluster`
 
+**Note:** This module comes without support for the default node pool
+or its autoscaling since it can't be managed properly with Terraform.
+Please use our [terraform-google-gke-node-pool](https://github.com/mineiros-io/terraform-google-gke-node-pool)
+module instead for deploying and managing node groups for your clusters.
+
 ## Getting Started
 
 Most common usage of the module:
@@ -76,11 +81,13 @@ See [variables.tf] and [examples/] for details and use-cases.
 - [**`location`**](#var-location): *(Optional `string`)*<a name="var-location"></a>
 
   The location (region or zone) in which the cluster master will be
-  created, as well as the default node location. If you specify a zone
-  (such as `us-central1-a`), the cluster will be a zonal cluster with
-  a single cluster master. If you specify a region (such as `us-west1`),
-  the cluster will be a regional cluster with multiple masters spread
-  across zones in the region, and with default node locations in those zones as well.
+  created, as well as the default node location.
+  If you specify a zone (such as `us-central1-a`), the cluster will be
+  a zonal cluster with a single cluster master.
+
+  If you specify a region (such as `us-west1`), the cluster will be a
+  regional cluster with multiple masters spread across zones in the
+  region, and with default node locations in those zones as well.
 
   For the differences between zonal and regional clusters, please see
   https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
@@ -88,18 +95,21 @@ See [variables.tf] and [examples/] for details and use-cases.
 - [**`network`**](#var-network): *(Optional `string`)*<a name="var-network"></a>
 
   The name or `self_link` of the Google Compute Engine network to which
-  the cluster is connected. For Shared VPC, set this to the self link of
-  the shared network.
+  the cluster is connected.
+
+  **Note:** For Shared VPC, set this to the self link of the shared network.
 
 - [**`subnetwork`**](#var-subnetwork): *(Optional `string`)*<a name="var-subnetwork"></a>
 
-  The name or `self_link` of the Google Compute Engine subnetwork in which
-  the cluster's instances are launched.
+  The name or `self_link` of the Google Compute Engine subnetwork in
+  which the cluster's instances are launched.
 
 - [**`networking_mode`**](#var-networking_mode): *(Optional `string`)*<a name="var-networking_mode"></a>
 
   Determines whether alias IPs or routes will be used for pod IPs in
-  the cluster. Options are `VPC_NATIVE` or `ROUTES`. `VPC_NATIVE`
+  the cluster.
+
+  Options are `VPC_NATIVE` or `ROUTES`. `VPC_NATIVE`
   enables IP aliasing, and requires the `ip_allocation_policy` block to
   be defined.
 
@@ -245,8 +255,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`enable_vertical_pod_autoscaling`**](#var-enable_vertical_pod_autoscaling): *(Optional `bool`)*<a name="var-enable_vertical_pod_autoscaling"></a>
 
-  If enabled, Vertical Pod Autoscaling automatically adjusts the
-  resources of pods controlled by it.
+  Whether to enable vertical Pod autoscaling in your cluster.
 
   For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler
 
@@ -254,7 +263,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`addon_horizontal_pod_autoscaling`**](#var-addon_horizontal_pod_autoscaling): *(Optional `bool`)*<a name="var-addon_horizontal_pod_autoscaling"></a>
 
-  Whether to enable orizontal Pod Autoscaling addon,
+  Whether to enable horizontal Pod Autoscaling addon,
   which increases or decreases the number of replica pods a
   replication controller has based on the resource usage of the existing pods.
 
@@ -445,7 +454,8 @@ See [variables.tf] and [examples/] for details and use-cases.
 - [**`resource_usage_export_bigquery_dataset_id`**](#var-resource_usage_export_bigquery_dataset_id): *(Optional `string`)*<a name="var-resource_usage_export_bigquery_dataset_id"></a>
 
   The ID of a BigQuery Dataset for using BigQuery as the destination of
-  resource usage export.
+  resource usage export. Needs to be configured when using egress metering
+  and/or resource consumption metering.
 
 - [**`enable_network_egress_metering`**](#var-enable_network_egress_metering): *(Optional `bool`)*<a name="var-enable_network_egress_metering"></a>
 
@@ -472,73 +482,6 @@ See [variables.tf] and [examples/] for details and use-cases.
   For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-usage-metering
 
   Default is `true`.
-
-- [**`cluster_autoscaling`**](#var-cluster_autoscaling): *(Optional `object(cluster_autoscaling)`)*<a name="var-cluster_autoscaling"></a>
-
-  Cluster autoscaling configuration. For details please see
-  https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler
-
-  Default is `false`.
-
-  The `cluster_autoscaling` object accepts the following attributes:
-
-  - [**`enabled`**](#attr-cluster_autoscaling-enabled): *(Optional `bool`)*<a name="attr-cluster_autoscaling-enabled"></a>
-
-    Whether node auto-provisioning is enabled. Resource limits for cpu
-    and memory must be defined to enable node auto-provisioning.
-
-    Default is `false`.
-
-  - [**`cpu`**](#attr-cluster_autoscaling-cpu): *(Optional `object(cpu)`)*<a name="attr-cluster_autoscaling-cpu"></a>
-
-    Global constraints for CPU machine resources in the cluster.
-    Configuring this is required if node auto-provisioning is enabled.
-    These limits will apply to node pool autoscaling in addition to
-    node auto-provisioning.
-
-    The `cpu` object accepts the following attributes:
-
-    - [**`minimum`**](#attr-cluster_autoscaling-cpu-minimum): *(Optional `number`)*<a name="attr-cluster_autoscaling-cpu-minimum"></a>
-
-      Minimum amount of CPU resources in the cluster.
-
-    - [**`maximum`**](#attr-cluster_autoscaling-cpu-maximum): *(Optional `number`)*<a name="attr-cluster_autoscaling-cpu-maximum"></a>
-
-      Maximum amount of CPU resources in the cluster.
-
-  - [**`memory`**](#attr-cluster_autoscaling-memory): *(Optional `object(memory)`)*<a name="attr-cluster_autoscaling-memory"></a>
-
-    Global constraints for Memory resources in the cluster. Configuring
-    this is required if node auto-provisioning is enabled. These limits
-    will apply to node pool autoscaling in addition to node auto-provisioning.
-
-    The `memory` object accepts the following attributes:
-
-    - [**`minimum`**](#attr-cluster_autoscaling-memory-minimum): *(Optional `number`)*<a name="attr-cluster_autoscaling-memory-minimum"></a>
-
-      Minimum amount of memory resources in the cluster.
-
-    - [**`maximum`**](#attr-cluster_autoscaling-memory-maximum): *(Optional `number`)*<a name="attr-cluster_autoscaling-memory-maximum"></a>
-
-      Maximum amount of memory resources in the cluster.
-
-  - [**`auto_provisioning_defaults`**](#attr-cluster_autoscaling-auto_provisioning_defaults): *(Optional `object(auto_provisioning_default)`)*<a name="attr-cluster_autoscaling-auto_provisioning_defaults"></a>
-
-    Contains defaults for a node pool created by NAP.
-
-    The `auto_provisioning_default` object accepts the following attributes:
-
-    - [**`oauth_scopes`**](#attr-cluster_autoscaling-auto_provisioning_defaults-oauth_scopes): *(Optional `list(string)`)*<a name="attr-cluster_autoscaling-auto_provisioning_defaults-oauth_scopes"></a>
-
-      Scopes that are used by NAP when creating node pools. Use the
-      https://www.googleapis.com/auth/cloud-platform scope to grant
-      access to all APIs. It is recommended that you set
-      `service_account` to a non-default service account and grant IAM
-      roles to that service account for only the resources that it needs.
-
-    - [**`service_account`**](#attr-cluster_autoscaling-auto_provisioning_defaults-service_account): *(Optional `string`)*<a name="attr-cluster_autoscaling-auto_provisioning_defaults-service_account"></a>
-
-      The Google Cloud Platform Service Account to be used by the node VMs.
 
 - [**`logging_enable_components`**](#var-logging_enable_components): *(Optional `set(string)`)*<a name="var-logging_enable_components"></a>
 
@@ -572,18 +515,26 @@ See [variables.tf] and [examples/] for details and use-cases.
   The GCE resource labels (a map of key/value pairs) to be applied to
   the cluster.
 
+  For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/creating-managing-labels
+
   Default is `{}`.
 
 - [**`default_max_pods_per_node`**](#var-default_max_pods_per_node): *(Optional `number`)*<a name="var-default_max_pods_per_node"></a>
 
   The maximum number of pods to schedule per node.
+  GKE has a hard limit of 110 Pods per node.
 
   Default is `110`.
 
 - [**`enable_intranode_visibility`**](#var-enable_intranode_visibility): *(Optional `bool`)*<a name="var-enable_intranode_visibility"></a>
 
   Whether Intra-node visibility is enabled for this cluster.
-  This makes same node pod to pod traffic visible for VPC network.
+  Intranode visibility configures networking on each node in the
+  cluster so that traffic sent from one Pod to another Pod is
+  processed by the cluster's Virtual Private Cloud (VPC) network,
+  even if the Pods are on the same node.
+
+  For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/intranode-visibility
 
   Default is `false`.
 
@@ -627,6 +578,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 - [**`enable_shielded_nodes`**](#var-enable_shielded_nodes): *(Optional `bool`)*<a name="var-enable_shielded_nodes"></a>
 
   Whether to enable Shielded Nodes features on all nodes in this cluster.
+  For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/release-channels
 
   Default is `true`.
 
