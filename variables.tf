@@ -67,38 +67,6 @@ variable "cluster_ipv4_cidr" {
   default     = null
 }
 
-variable "cluster_autoscaling" {
-  type = any
-  # type = object({
-  #   # (Required) Whether node auto-provisioning is enabled. Resource limits for cpu and memory must be defined to enable node auto-provisioning.
-  #   enabled = bool
-  #   # (Optional) Configuring the CPU thresholds is required if node auto-provisioning is enabled. These limits will apply to node pool autoscaling in addition to node auto-provisioning.
-  #   cpu = optional(object({
-  #     # (Optional) Minimum amount of the resource in the cluster.
-  #     minimum = optional(number)
-  #     # (Optional) Maximum amount of the resource in the cluster.
-  #     maximum = optional(number)
-  #   }))
-  #   # (Optional) Configuring memory thresholds is required if node auto-provisioning is enabled. These limits will apply to node pool autoscaling in addition to node auto-provisioning.
-  #   memory = optional(object({
-  #     # (Optional) Minimum amount of the resource in the cluster.
-  #     minimum = optional(number)
-  #     # (Optional) Maximum amount of the resource in the cluster.
-  #     maximum = optional(number)
-  #   }))
-  #   # (Optional) Contains defaults for a node pool created by NAP.
-  #   auto_provisioning_defaults = optional(object({
-  #     # (Optional) Scopes that are used by NAP when creating node pools. Use the "https://www.googleapis.com/auth/cloud-platform" scope to grant access to all APIs. It is recommended that you set `service_account` to a non-default service account and grant IAM roles to that service account for only the resources that it needs.
-  #     # Note: `monitoring`.write is always enabled regardless of user input. `monitoring` and `logging`,.`write` may also be enabled depending on the values for `monitoring_service` and `logging_service`.
-  #     oauth_scopes = optional(set(string))
-  #     # (Optional) The Google Cloud Platform Service Account to be used by the node VMs.
-  #     service_account = optional(string)
-  #   }))
-  # })
-  description = "(Optional) Cluster autoscaling configuration. For details please see: https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling"
-  default     = null
-}
-
 variable "database_encryption_key_name" {
   type        = string
   description = "(Optional) The name of a CloudKMS key to enable application-layer secrets encryption settings. If non-null the state will be set to: ENCRYPTED else DECRYPTED."

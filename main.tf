@@ -79,39 +79,6 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
-  # --------------------------------------------------------------------------------------------------------------------
-  # Node auto-provisioning
-  # --------------------------------------------------------------------------------------------------------------------
-
-  dynamic "cluster_autoscaling" {
-    for_each = var.cluster_autoscaling != null ? [var.cluster_autoscaling] : []
-
-    content {
-      enabled = try(cluster_autoscaling.value.enabled, false)
-
-      resource_limits {
-        resource_type = "cpu"
-        minimum       = try(cluster_autoscaling.value.cpu.minimum, null)
-        maximum       = try(cluster_autoscaling.value.cpu.maximum, null)
-      }
-
-      resource_limits {
-        resource_type = "memory"
-        minimum       = try(cluster_autoscaling.value.memory.minimum, null)
-        maximum       = try(cluster_autoscaling.value.memory.maximum, null)
-      }
-
-      dynamic "auto_provisioning_defaults" {
-        for_each = try([cluster_autoscaling.value.auto_provisioning_defaults], [])
-
-        content {
-          oauth_scopes    = try(auto_provisioning_defaults.value.oauth_scopes, null)
-          service_account = try(auto_provisioning_defaults.value.service_account, null)
-        }
-      }
-    }
-  }
-
   dynamic "vertical_pod_autoscaling" {
     for_each = var.enable_vertical_pod_autoscaling != null ? [1] : []
 
@@ -221,9 +188,10 @@ resource "google_container_cluster" "cluster" {
   # REMOVE DEFAULT NODE-POOL AFTER INITIAL CREATION
   #
   # We create the smallest possible default node-pool and delete it right away
-  # there is no way not to create the default node pool.
-  # node pools should be created using the terraform-google-gke-node-pool module
-  # for regional clusters that will create 1 node in each zone of the region
+  # since there is no way not to create the default node pool.
+  # Node pools should be created using the terraform-google-gke-node-pool module
+  #
+  # For details please see https://github.com/mineiros-io/terraform-google-gke-node-pool
   # --------------------------------------------------------------------------------------------------------------------
 
   initial_node_count       = 1
