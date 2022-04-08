@@ -66,17 +66,16 @@ section {
       module "terraform-google-gke-cluster" {
         source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.4"
 
-        project            = "project-id"
-        location           = "region"
-        network            = "name-of-network"
-        subnetwork         = "name-of-subnet"
-        name               = "name-of-cluster"
-        min_master_version = "min-version"
+        name       = "gke-example"
+        network    = "vpc_self_link"
+        subnetwork = "subnetwork_self_link"
 
-        cluster_secondary_range_name  = "range-name"
-        services_secondary_range_name = "range-name"
+        master_ipv4_cidr_block = "10.4.96.0/28"
 
-        master_ipv4_cidr_block = "ip-range"
+        ip_allocation_policy = {
+          cluster_secondary_range_name  = "pod_range_name"
+          services_secondary_range_name = "services_range_name"
+        }
       }
       ```
     END
@@ -108,6 +107,7 @@ section {
           a single cluster master. If you specify a region (such as `us-west1`),
           the cluster will be a regional cluster with multiple masters spread
           across zones in the region, and with default node locations in those zones as well.
+
           For the differences between zonal and regional clusters, please see
           https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
         END
@@ -138,6 +138,9 @@ section {
           the cluster. Options are `VPC_NATIVE` or `ROUTES`. `VPC_NATIVE`
           enables IP aliasing, and requires the `ip_allocation_policy` block to
           be defined.
+
+          Using a VPC-native cluster is the recommended approach by Google.
+          For an overview of benefits of VPC-native clusters, please see https://cloud.google.com/kubernetes-engine/docs/concepts/alias-ips#benefits
         END
       }
 
@@ -155,16 +158,20 @@ section {
           The name of the RBAC security identity group for use with Google
           security groups in Kubernetes RBAC. Group name must be in format
           `gke-security-groups@yourdomain.com`.
-          For details please see
-          https://cloud.google.com/kubernetes-engine/docs/how-to/google-groups-rbac
+
+          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/google-groups-rbac
         END
       }
 
       variable "min_master_version" {
         type        = string
         description = <<-END
-          The Kubernetes minimal version of the masters. If set to `latest` it
-          will pull latest available version in the selected region.
+          The minimum version of the Kubernetes master.
+          GKE will auto-update the master to new versions, so this does not
+          guarantee the current master version uses the read-only
+          `master_version` field to obtain that.
+          If unset, the cluster's version will be set by GKE to the version of
+          the most recent official release.
         END
       }
 
@@ -174,6 +181,7 @@ section {
           The IP address range of the Kubernetes pods in this cluster in CIDR
           notation (e.g. `10.96.0.0/14`). Leave blank to have one automatically
           chosen or specify a `/14` block in `10.0.0.0/8`.
+
           **Note:** This field will only work for routes-based clusters, where
           `ip_allocation_policy` is not defined.
         END
@@ -183,8 +191,8 @@ section {
         type = object(ip_allocation_policy)
         description = <<-END
           Configuration of cluster IP allocation for VPC-native clusters.
-          Adding this block enables IP aliasing, making the cluster VPC-native
-          instead of routes-based.
+
+          **Note:** This field will only work for VPC-native clusters.
         END
         readme_example = <<-END
           readme_example = {
@@ -308,6 +316,8 @@ section {
         description = <<-END
           If enabled, Vertical Pod Autoscaling automatically adjusts the
           resources of pods controlled by it.
+
+          For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler
         END
       }
 
@@ -315,7 +325,11 @@ section {
         type        = bool
         default     = true
         description = <<-END
-          Whether to enable the horizontal pod autoscaling addon.
+          Whether to enable orizontal Pod Autoscaling addon,
+          which increases or decreases the number of replica pods a
+          replication controller has based on the resource usage of the existing pods.
+
+          For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler
         END
       }
 
@@ -323,7 +337,10 @@ section {
         type        = bool
         default     = true
         description = <<-END
-          Whether to enable the httpload balancer addon.
+          Whether to enable the the HTTP (L7) load balancing controller addon,
+          which makes it easy to set up HTTP load balancers for services in a cluster..
+          
+          For details please https://cloud.google.com/kubernetes-engine/docs/concepts/ingress
         END
       }
 
@@ -331,31 +348,35 @@ section {
         type        = bool
         default     = false
         description = <<-END
-          Whether to enable the network policy addon.
-        END
-      }
+          Whether to enable the network policy addon for the master.
 
-      variable "addon_network_policy_config" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether to enable the network policy addon.
-        END
-      }
+          Network policies can be used to control the communication between
+          your cluster's Pods and Services. You define a network policy by
+          using the Kubernetes Network Policy API to create Pod-level firewall
+          rules. These firewall rules determine which Pods and Services can
+          access one another inside your cluster.
 
-      variable "addon_filestore_csi_driver" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether to enable the Filestore CSI driver addon, which allows the
-          usage of filestore instance as volumes.
+          This must be enabled in order to enable network policy for the nodes.
+          To enable this, you must also define a `network_policy` block, otherwise
+          nothing will happen. It can only be disabled if the nodes already do
+          not have network policies enabled.
+
+          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/network-policy
         END
       }
 
       variable "network_policy" {
         type        = object(network_policy)
         description = <<-END
-          Configuration options for the NetworkPolicy feature.
+          Configuration options for the network policy addon.
+          Can only be used if the network policy addon is enabled
+          by enabling `addon_network_policy_config`.
+        END
+        readme_example = <<-END
+          network_policy = {
+            enabled  = true
+            provider = "CALICO"
+          }
         END
 
         attribute "enabled" {
@@ -375,16 +396,33 @@ section {
         }
       }
 
+      variable "addon_filestore_csi_driver" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether to enable the Filestore CSI driver addon, which allows the
+          usage of filestore instance as volumes.
+          
+          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/filestore-csi-driver
+        END
+      }
+
+
       variable "maintenance_policy" {
         type        = object(maintenance_policy)
         description = <<-END
-          The maintenance policy to use for the cluster.
+          The maintenance windows and maintenance exclusions, which provide
+          control over when cluster maintenance such as auto-upgrades can and
+          cannot occur on your cluster.
+
+          For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions
         END
 
         attribute "daily_maintenance_window" {
           type        = object(daily_maintenance_window)
           description = <<-END
             Time window specified for daily maintenance operations.
+
             For details please see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#daily_maintenance_window
           END
           readme_example = <<-END
@@ -409,6 +447,7 @@ section {
           type        = object(recurring_window)
           description = <<-END
             Time window specified for recurring maintenance operations.
+           
             For details please see https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#recurring_window
           END
           readme_example = <<-END
@@ -455,6 +494,7 @@ section {
             Exceptions to maintenance window. Non-emergency maintenance should
             not occur in these windows. A cluster can have up to three
             maintenance exclusions at a time.
+
             For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions
           END
           readme_example = <<-END
@@ -519,7 +559,13 @@ section {
         description = <<-END
           Whether to enable network egress metering for this cluster. If
           enabled, a daemonset will be created in the cluster to meter network
-          egress traffic.
+          egress traffic. When enabling the network egress metering, a BigQuery
+          Dataset needs to be configured as the destination using the
+          `resource_usage_export_bigquery_dataset_id` variable.
+
+          **Note:** You cannot use Shared VPCs or VPC peering with network egress metering.
+
+          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-usage-metering
         END
       }
 
@@ -529,8 +575,11 @@ section {
         description = <<-END
           Whether to enable resource consumption metering on this cluster. When
           enabled, a table will be created in the resource export BigQuery
-          dataset to store resource consumption data. The resulting table can be
+          dataset that needs to be configured in `resource_usage_export_bigquery_dataset_id`
+          to store resource consumption data. The resulting table can be
           joined with the resource usage table or with BigQuery billing export.
+
+          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-usage-metering
         END
       }
 
@@ -539,7 +588,7 @@ section {
 				default     = false
         description = <<-END
           Cluster autoscaling configuration. For details please see
-          https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#clusterautoscaling
+          https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler
         END
 
         attribute "enabled" {
