@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4]
+
 ### Added
 
 - Add support for `gcp_filestore_csi_driver_config` block
@@ -25,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Remove support for the `cloudrun_config` block as it is no longer available as a GKE add-on
+- Remove support confidential nodes since it is a beta feature
 
 ## [0.0.3]
 
@@ -40,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename `maintenance_exclusion` attribute to `maintenance_exclusions` in `recurring_window` maintenance policy
 - Update README and add missing variables
 - Disable the `network_policy` block per default
+- Rename `var.enabled_vertical_pod_autoscaling` to `var.enable_vertical_pod_autoscaling`
 
 ### Fixed
 
@@ -66,7 +70,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Implementation
 
-[unreleased]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.3...HEAD
+[unreleased]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/mineiros-io/terraform-google-gke-cluster/releases/tag/v0.0.1

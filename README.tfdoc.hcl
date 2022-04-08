@@ -64,7 +64,7 @@ section {
 
       ```hcl
       module "terraform-google-gke-cluster" {
-        source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.2"
+        source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.4"
 
         project            = "project-id"
         location           = "region"
@@ -302,7 +302,7 @@ section {
         }
       }
 
-      variable "enabled_vertical_pod_autoscaling" {
+      variable "enable_vertical_pod_autoscaling" {
         type        = bool
         default     = false
         description = <<-END
@@ -510,14 +510,6 @@ section {
         description = <<-END
           The ID of a BigQuery Dataset for using BigQuery as the destination of
           resource usage export.
-        END
-      }
-
-      variable "enable_confidential_nodes" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether to enable Confidential Nodes for this cluster.
         END
       }
 

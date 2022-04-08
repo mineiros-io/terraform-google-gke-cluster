@@ -262,12 +262,6 @@ variable "network_policy" {
   default     = null
 }
 
-variable "enable_confidential_nodes" {
-  type        = bool
-  description = "(Optional) Whether to enable Confidential Nodes for this cluster."
-  default     = false
-}
-
 variable "rbac_security_identity_group" {
   description = "(Optional) The name of the RBAC security identity group for use with Google security groups in Kubernetes RBAC. Group name must be in format 'gke-security-groups@yourdomain.com'."
   type        = string
@@ -292,7 +286,7 @@ variable "master_authorized_networks_config" {
   default     = null
 }
 
-variable "enabled_vertical_pod_autoscaling" {
+variable "enable_vertical_pod_autoscaling" {
   type        = bool
   description = "(Optional) If enabled, Vertical Pod Autoscaling automatically adjusts the resources of pods controlled by it."
   default     = false

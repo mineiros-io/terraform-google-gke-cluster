@@ -113,18 +113,10 @@ resource "google_container_cluster" "cluster" {
   }
 
   dynamic "vertical_pod_autoscaling" {
-    for_each = var.enabled_vertical_pod_autoscaling != null ? [1] : []
+    for_each = var.enable_vertical_pod_autoscaling != null ? [1] : []
 
     content {
-      enabled = var.enabled_vertical_pod_autoscaling
-    }
-  }
-
-  dynamic "confidential_nodes" {
-    for_each = var.enable_confidential_nodes != null ? [1] : []
-
-    content {
-      enabled = var.enable_confidential_nodes
+      enabled = var.enable_vertical_pod_autoscaling
     }
   }
 

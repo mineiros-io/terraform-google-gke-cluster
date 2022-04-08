@@ -129,8 +129,17 @@ module "test" {
     "${var.region}-b",
   ]
 
+  min_master_version = "latest"
+
   master_ipv4_cidr_block = "10.4.96.0/28"
   networking_mode        = "VPC_NATIVE"
+
+  addon_network_policy_config = true
+  network_policy = {
+    enabled  = true
+    provider = "CALICO"
+  }
+
   ip_allocation_policy = {
     cluster_secondary_range_name  = local.subnet.secondary_ip_ranges.pods.name
     services_secondary_range_name = local.subnet.secondary_ip_ranges.services.name
@@ -156,14 +165,19 @@ module "test" {
     }
   }
 
-  default_max_pods_per_node   = 110
-  enable_binary_authorization = true
-  enable_kubernetes_alpha     = false
-  enable_tpu                  = true
-  enable_legacy_abac          = true
-  enable_shielded_nodes       = false
-  enable_private_nodes        = true
-  enable_private_endpoint     = true
+  rbac_security_identity_group = "gke-security-groups@mineiros.io"
+
+  default_max_pods_per_node            = 110
+  enable_binary_authorization          = true
+  enable_kubernetes_alpha              = false
+  enable_tpu                           = true
+  enable_legacy_abac                   = true
+  enable_shielded_nodes                = false
+  enable_private_nodes                 = true
+  enable_private_endpoint              = true
+  enable_network_egress_metering       = true
+  enable_resource_consumption_metering = true
+  enable_intranode_visibility          = true
   master_authorized_networks_config = {
     cidr_blocks = [
       {
@@ -172,7 +186,6 @@ module "test" {
       }
     ]
   }
-  enable_intranode_visibility = true
 
   # NOTE: currently, a bug in the provider prevents us from configuring both, logging and monitoring services
   # for details please see https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/issues/1144
@@ -204,7 +217,6 @@ module "test" {
 
   addon_horizontal_pod_autoscaling = false
   addon_http_load_balancing        = false
-  addon_network_policy_config      = false
   addon_filestore_csi_driver       = true
   # TODO Remove
   # https://github.com/mineiros-io/terraform-google-gke-cluster/runs/5869380367?check_suite_focus=true

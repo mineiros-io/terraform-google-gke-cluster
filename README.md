@@ -48,7 +48,7 @@ Most common usage of the module:
 
 ```hcl
 module "terraform-google-gke-cluster" {
-  source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.2"
+  source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.4"
 
   project            = "project-id"
   location           = "region"
@@ -235,7 +235,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
       Field for users to identify CIDR blocks.
 
-- [**`enabled_vertical_pod_autoscaling`**](#var-enabled_vertical_pod_autoscaling): *(Optional `bool`)*<a name="var-enabled_vertical_pod_autoscaling"></a>
+- [**`enable_vertical_pod_autoscaling`**](#var-enable_vertical_pod_autoscaling): *(Optional `bool`)*<a name="var-enable_vertical_pod_autoscaling"></a>
 
   If enabled, Vertical Pod Autoscaling automatically adjusts the
   resources of pods controlled by it.
@@ -402,12 +402,6 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   The ID of a BigQuery Dataset for using BigQuery as the destination of
   resource usage export.
-
-- [**`enable_confidential_nodes`**](#var-enable_confidential_nodes): *(Optional `bool`)*<a name="var-enable_confidential_nodes"></a>
-
-  Whether to enable Confidential Nodes for this cluster.
-
-  Default is `false`.
 
 - [**`enable_network_egress_metering`**](#var-enable_network_egress_metering): *(Optional `bool`)*<a name="var-enable_network_egress_metering"></a>
 
