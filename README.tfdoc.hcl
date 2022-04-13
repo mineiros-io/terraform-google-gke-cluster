@@ -732,6 +732,36 @@ section {
           Whether to enable BinAuthZ Admission controller.
         END
       }
+
+      variable "enable_tpu" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether to enable Cloud TPU resources in this cluster.
+          For details please see https://cloud.google.com/tpu/docs/kubernetes-engine-setup
+        END
+      }
+
+      variable "enable_legacy_abac" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether the ABAC authorizer is enabled for this cluster.
+          When enabled, identities in the system, including service accounts,
+          nodes, and controllers, will have statically granted permissions
+          beyond those provided by the RBAC configuration or IAM.
+        END
+      }
+
+      variable "enable_kubernetes_alpha" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether to enable Kubernetes Alpha features for this cluster.
+          **Note:** that when this option is enabled, the cluster cannot be
+          upgraded and will be automatically deleted after 30 days
+        END
+      }
     }
 
     section {

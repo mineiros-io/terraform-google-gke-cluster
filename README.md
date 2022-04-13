@@ -588,6 +588,30 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `false`.
 
+- [**`enable_tpu`**](#var-enable_tpu): *(Optional `bool`)*<a name="var-enable_tpu"></a>
+
+  Whether to enable Cloud TPU resources in this cluster.
+  For details please see https://cloud.google.com/tpu/docs/kubernetes-engine-setup
+
+  Default is `false`.
+
+- [**`enable_legacy_abac`**](#var-enable_legacy_abac): *(Optional `bool`)*<a name="var-enable_legacy_abac"></a>
+
+  Whether the ABAC authorizer is enabled for this cluster.
+  When enabled, identities in the system, including service accounts,
+  nodes, and controllers, will have statically granted permissions
+  beyond those provided by the RBAC configuration or IAM.
+
+  Default is `false`.
+
+- [**`enable_kubernetes_alpha`**](#var-enable_kubernetes_alpha): *(Optional `bool`)*<a name="var-enable_kubernetes_alpha"></a>
+
+  Whether to enable Kubernetes Alpha features for this cluster.
+  **Note:** that when this option is enabled, the cluster cannot be
+  upgraded and will be automatically deleted after 30 days
+
+  Default is `false`.
+
 ### Module Configuration
 
 - [**`module_enabled`**](#var-module_enabled): *(Optional `bool`)*<a name="var-module_enabled"></a>
