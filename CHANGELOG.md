@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.7]
+
+### Changed
+
+- BREAKING CHANGE: change minimum supported provider version to `v4.22`
+
+### Added
+
+- Add support for `exclusion_options` in maintenance exclusions.
+
 ## [0.0.6]
 
 ### Added
@@ -86,7 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Implementation
 
-[unreleased]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.6...HEAD
+[unreleased]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.7...HEAD
+[0.0.7]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/mineiros-io/terraform-google-gke-cluster/compare/v0.0.3...v0.0.4

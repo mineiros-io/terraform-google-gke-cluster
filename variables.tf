@@ -212,6 +212,11 @@ variable "maintenance_policy" {
   #     start_time = string
   #     # (Required) Specify `end_time` in RFC3339 "Zulu" date format. The end time is used for calculating duration.
   #     end_time = string
+  #     (Optional) Maintenance exclusion related options.
+  #     exclusion_options = optional(object({
+  #       (Required) he scope of automatic upgrades to restrict in the exclusion window
+  #       scope = string
+  #     }))
   #   })))
   # })
   description = "(Optional) The maintenance policy to use for the cluster."

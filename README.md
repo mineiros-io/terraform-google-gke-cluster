@@ -53,7 +53,7 @@ Most common usage of the module:
 
 ```hcl
 module "terraform-google-gke-cluster" {
-  source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.4"
+  source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.7"
 
   name       = "gke-example"
   network    = "vpc_self_link"
@@ -426,6 +426,9 @@ See [variables.tf] and [examples/] for details and use-cases.
         exclusion_name = "batch job"
         start_time     = "2022-01-01T00:00:00Z"
         end_time       = "2022-01-02T00:00:00Z"
+        exclusion_options = {
+          scope = "NO_UPGRADES"
+        }
       }
       maintenance_exclusion = {
         exclusion_name = "holiday data load"
@@ -450,6 +453,17 @@ See [variables.tf] and [examples/] for details and use-cases.
 
       Specify `end_time` in RFC3339 "Zulu" date format.
       The end time is used for calculating duration.
+
+    - [**`exclusion_options`**](#attr-maintenance_policy-maintenance_exclusion-exclusion_options): *(Optional `object(exclusion_options)`)*<a name="attr-maintenance_policy-maintenance_exclusion-exclusion_options"></a>
+
+      Configure maintenance exclusion related options.
+
+      The `exclusion_options` object accepts the following attributes:
+
+      - [**`scope`**](#attr-maintenance_policy-maintenance_exclusion-exclusion_options-scope): *(**Required** `string`)*<a name="attr-maintenance_policy-maintenance_exclusion-exclusion_options-scope"></a>
+
+        The scope of automatic upgrades to restrict in the exclusion window.
+        Accepted values are: `NO_UPGRADES`, `NO_MINOR_UPGRADES` and `NO_MINOR_OR_NODE_UPGRADES`.
 
 - [**`resource_usage_export_bigquery_dataset_id`**](#var-resource_usage_export_bigquery_dataset_id): *(Optional `string`)*<a name="var-resource_usage_export_bigquery_dataset_id"></a>
 

@@ -69,7 +69,7 @@ section {
 
       ```hcl
       module "terraform-google-gke-cluster" {
-        source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.4"
+        source = "git@github.com:mineiros-io/terraform-google-gke-cluster.git?ref=v0.0.7"
 
         name       = "gke-example"
         network    = "vpc_self_link"
@@ -517,6 +517,9 @@ section {
                 exclusion_name = "batch job"
                 start_time     = "2022-01-01T00:00:00Z"
                 end_time       = "2022-01-02T00:00:00Z"
+                exclusion_options = {
+                  scope = "NO_UPGRADES"
+                }
               }
               maintenance_exclusion = {
                 exclusion_name = "holiday data load"
@@ -550,6 +553,22 @@ section {
               Specify `end_time` in RFC3339 "Zulu" date format.
               The end time is used for calculating duration.
             END
+          }
+
+          attribute "exclusion_options" {
+            type        = object(exclusion_options)
+            description = <<-END
+						  Configure maintenance exclusion related options.
+            END
+
+              attribute "scope" {
+                required    = true
+                type        = string
+                description = <<-END
+                  The scope of automatic upgrades to restrict in the exclusion window.
+                  Accepted values are: `NO_UPGRADES`, `NO_MINOR_UPGRADES` and `NO_MINOR_OR_NODE_UPGRADES`.
+                END
+              }
           }
         }
       }

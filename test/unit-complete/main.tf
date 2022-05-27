@@ -187,6 +187,9 @@ module "test" {
         exclusion_name = "batch job"
         start_time     = "2025-01-01T00:00:00Z"
         end_time       = "2025-01-02T00:00:00Z"
+        exclusion_options = {
+          scope = "NO_UPGRADES"
+        }
       },
       {
         exclusion_name = "holiday data load"
