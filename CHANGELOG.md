@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- BREAKING CHANGE: change minimum supported provider version to `v4.22`
+
 ## [0.0.6]
 
 ### Added
