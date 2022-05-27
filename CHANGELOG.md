@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - BREAKING CHANGE: change minimum supported provider version to `v4.22`
 
+### Added
+
+- Add support for `exclusion_options` in maintenance exclusions.
+
 ## [0.0.6]
 
 ### Added
