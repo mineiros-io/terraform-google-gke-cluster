@@ -23,11 +23,33 @@ resource "google_container_cluster" "cluster" {
   enable_intranode_visibility = var.enable_intranode_visibility
   private_ipv6_google_access  = var.private_ipv6_google_access
 
-  enable_shielded_nodes       = var.enable_shielded_nodes
-  enable_binary_authorization = var.enable_binary_authorization
-  enable_kubernetes_alpha     = var.enable_kubernetes_alpha
-  enable_tpu                  = var.enable_tpu
-  enable_legacy_abac          = var.enable_legacy_abac
+  enable_shielded_nodes   = var.enable_shielded_nodes
+  enable_kubernetes_alpha = var.enable_kubernetes_alpha
+  enable_tpu              = var.enable_tpu
+  enable_legacy_abac      = var.enable_legacy_abac
+
+  dynamic "binary_authorization" {
+    for_each = var.binary_authorization == true ? [var.binary_authorization] : []
+    content {
+      evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+    }
+  }
+
+  dynamic "cost_management_config" {
+    for_each = var.enable_cost_allocation ? [1] : []
+    content {
+      enabled = var.enable_cost_allocation
+    }
+  }
+
+  dynamic "dns_config" {
+    for_each = var.cluster_dns_provider == "CLOUD_DNS" ? [1] : []
+    content {
+      cluster_dns        = var.cluster_dns_provider
+      cluster_dns_scope  = var.cluster_dns_scope
+      cluster_dns_domain = var.cluster_dns_domain
+    }
+  }
 
   # TODO: use data source to allow fuzzy version specification
   min_master_version = var.min_master_version
@@ -76,6 +98,9 @@ resource "google_container_cluster" "cluster" {
 
     content {
       enable_components = var.monitoring_enable_components
+      managed_prometheus {
+        enabled = var.managed_prometheus
+      }
     }
   }
 
@@ -86,6 +111,7 @@ resource "google_container_cluster" "cluster" {
       enabled = var.enable_vertical_pod_autoscaling
     }
   }
+
 
   # --------------------------------------------------------------------------------------------------------------------
   # MASTER AUTHORIZED NETWORKS
@@ -113,6 +139,12 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
+  master_auth {
+    client_certificate_config {
+      issue_client_certificate = var.issue_client_certificate
+    }
+  }
+
   # --------------------------------------------------------------------------------------------------------------------
   # Configuration for addons supported by GKE
   # --------------------------------------------------------------------------------------------------------------------
@@ -128,6 +160,10 @@ resource "google_container_cluster" "cluster" {
 
     network_policy_config {
       disabled = !var.addon_network_policy_config
+    }
+
+    dns_cache_config {
+      enabled = var.addon_dns_cache_config
     }
 
     gcp_filestore_csi_driver_config {

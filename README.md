@@ -271,6 +271,12 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `true`.
 
+- [**`addon_dns_cache_config`**](#var-addon_dns_cache_config): *(Optional `bool`)*<a name="var-addon_dns_cache_config"></a>
+
+  (Optional) The status of the NodeLocal DNSCache addon.
+
+  Default is `false`.
+
 - [**`addon_http_load_balancing`**](#var-addon_http_load_balancing): *(Optional `bool`)*<a name="var-addon_http_load_balancing"></a>
 
   Whether to enable the the HTTP (L7) load balancing controller addon,
@@ -596,9 +602,48 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `true`.
 
-- [**`enable_binary_authorization`**](#var-enable_binary_authorization): *(Optional `bool`)*<a name="var-enable_binary_authorization"></a>
+- [**`binary_authorization`**](#var-binary_authorization): *(Optional `bool`)*<a name="var-binary_authorization"></a>
 
   Whether to enable BinAuthZ Admission controller.
+
+  Default is `false`.
+
+- [**`issue_client_certificate`**](#var-issue_client_certificate): *(Optional `bool`)*<a name="var-issue_client_certificate"></a>
+
+  Issues a client certificate to authenticate to the cluster
+  endpoint. To maximize the security of your cluster, leave
+  this option disabled. Client certificates don't
+  automatically rotate and aren't easily revocable. WARNING: changing this after cluster creation is destructive!
+
+  Default is `false`.
+
+- [**`managed_prometheus`**](#var-managed_prometheus): *(Optional `bool`)*<a name="var-managed_prometheus"></a>
+
+  (Optional) Enable Managed Prometheus.
+
+  Default is `false`.
+
+- [**`cluster_dns_provider`**](#var-cluster_dns_provider): *(Optional `string`)*<a name="var-cluster_dns_provider"></a>
+
+  Which in-cluster DNS provider should be used. PROVIDER_UNSPECIFIED (default) or PLATFORM_DEFAULT or CLOUD_DNS.
+
+  Default is `"PROVIDER_UNSPECIFIED"`.
+
+- [**`cluster_dns_scope`**](#var-cluster_dns_scope): *(Optional `string`)*<a name="var-cluster_dns_scope"></a>
+
+  The scope of access to cluster DNS records. DNS_SCOPE_UNSPECIFIED (default) or CLUSTER_SCOPE or VPC_SCOPE.
+
+  Default is `"DNS_SCOPE_UNSPECIFIED"`.
+
+- [**`cluster_dns_domain`**](#var-cluster_dns_domain): *(Optional `string`)*<a name="var-cluster_dns_domain"></a>
+
+  The suffix used for all cluster service records.
+
+  Default is `""`.
+
+- [**`enable_cost_allocation`**](#var-enable_cost_allocation): *(Optional `bool`)*<a name="var-enable_cost_allocation"></a>
+
+  Enables Cost Allocation Feature and the cluster name and namespace of your GKE workloads appear in the labels field of the billing export to BigQuery
 
   Default is `false`.
 
