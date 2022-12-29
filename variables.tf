@@ -37,6 +37,12 @@ variable "addon_horizontal_pod_autoscaling" {
   default     = true
 }
 
+variable "addon_dns_cache_config" {
+  type        = bool
+  description = "(Optional) The status of the NodeLocal DNSCache addon."
+  default     = false
+}
+
 variable "addon_http_load_balancing" {
   type        = bool
   description = "(Optional) Whether to enable the httpload balancer addon."
@@ -91,10 +97,46 @@ variable "default_max_pods_per_node" {
   default     = null
 }
 
-variable "enable_binary_authorization" {
-  type        = bool
-  description = "(Optional) Enable BinAuthZ Admission controller"
+variable "binary_authorization" {
   default     = false
+  description = "(Optional) Enable BinAuthZ Admission controller"
+  type        = bool
+}
+
+variable "managed_prometheus" {
+  default     = false
+  description = "(Optional) Enable Managed Prometheus"
+  type        = bool
+}
+
+variable "issue_client_certificate" {
+  type        = bool
+  description = "Issues a client certificate to authenticate to the cluster endpoint. To maximize the security of your cluster, leave this option disabled. Client certificates don't automatically rotate and aren't easily revocable. WARNING: changing this after cluster creation is destructive!"
+  default     = false
+}
+
+variable "enable_cost_allocation" {
+  type        = bool
+  description = "Enables Cost Allocation Feature and the cluster name and namespace of your GKE workloads appear in the labels field of the billing export to BigQuery"
+  default     = false
+}
+
+variable "cluster_dns_provider" {
+  type        = string
+  description = "Which in-cluster DNS provider should be used. PROVIDER_UNSPECIFIED (default) or PLATFORM_DEFAULT or CLOUD_DNS."
+  default     = "PROVIDER_UNSPECIFIED"
+}
+
+variable "cluster_dns_scope" {
+  type        = string
+  description = "The scope of access to cluster DNS records. DNS_SCOPE_UNSPECIFIED (default) or CLUSTER_SCOPE or VPC_SCOPE. "
+  default     = "DNS_SCOPE_UNSPECIFIED"
+}
+
+variable "cluster_dns_domain" {
+  type        = string
+  description = "The suffix used for all cluster service records."
+  default     = ""
 }
 
 variable "enable_kubernetes_alpha" {

@@ -19,7 +19,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 4.0"
+      version = "4.46.0"
     }
   }
 }
@@ -149,7 +149,7 @@ module "test" {
   rbac_security_identity_group = "gke-security-groups@mineiros.io"
 
   default_max_pods_per_node            = 110
-  enable_binary_authorization          = true
+  binary_authorization                 = true
   enable_kubernetes_alpha              = false
   enable_tpu                           = true
   enable_legacy_abac                   = true

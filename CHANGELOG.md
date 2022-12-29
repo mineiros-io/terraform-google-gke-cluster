@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- BREAKING CHANGE: change minimum supported provider version to `v4.46`
+- BREAKING CHANGE: changed deprecated Binary Authorization block
+
+### Added
+
+- Add option `cost_management_config`.
+- Add option `dns_config`.
+- Add option `managed_prometheus`.
+- Add option `issue_client_certificate`.
+- Add addon `dns_cache_config`.
+
 ## [0.0.7]
 
 ### Changed

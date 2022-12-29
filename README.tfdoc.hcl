@@ -342,6 +342,14 @@ section {
         END
       }
 
+      variable "addon_dns_cache_config" {
+        type        = bool
+        default     = false
+        description = <<-END
+          (Optional) The status of the NodeLocal DNSCache addon.
+        END
+      }
+
       variable "addon_http_load_balancing" {
         type        = bool
         default     = true
@@ -744,11 +752,63 @@ section {
         END
       }
 
-      variable "enable_binary_authorization" {
+      variable "binary_authorization" {
         type        = bool
         default     = false
         description = <<-END
           Whether to enable BinAuthZ Admission controller.
+        END
+      }
+
+      variable "issue_client_certificate" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Issues a client certificate to authenticate to the cluster
+          endpoint. To maximize the security of your cluster, leave
+          this option disabled. Client certificates don't
+          automatically rotate and aren't easily revocable. WARNING: changing this after cluster creation is destructive!
+        END
+      }
+
+      variable "managed_prometheus" {
+        type        = bool
+        default     = false
+        description = <<-END
+          (Optional) Enable Managed Prometheus.
+        END
+      }
+
+      variable "cluster_dns_provider" {
+        type        = string
+        default     = "PROVIDER_UNSPECIFIED"
+        description = <<-END
+          Which in-cluster DNS provider should be used. PROVIDER_UNSPECIFIED (default) or PLATFORM_DEFAULT or CLOUD_DNS.
+        END
+      }
+
+      variable "cluster_dns_scope" {
+        type        = string
+        default     = "DNS_SCOPE_UNSPECIFIED"
+        description = <<-END
+          The scope of access to cluster DNS records. DNS_SCOPE_UNSPECIFIED (default) or CLUSTER_SCOPE or VPC_SCOPE.
+        END
+      }
+
+      variable "cluster_dns_domain" {
+        type        = string
+        default     = ""
+        description = <<-END
+          The suffix used for all cluster service records.
+        END
+      }
+
+
+      variable "enable_cost_allocation" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Enables Cost Allocation Feature and the cluster name and namespace of your GKE workloads appear in the labels field of the billing export to BigQuery
         END
       }
 
